@@ -1,0 +1,121 @@
+<html>
+<head>
+        <link rel="stylesheet" href="Tableau.css"></link>
+        <link rel="stylesheet" href="pageStyles.css"></link>
+        <title>SO(p,q) Even Algorithm</title>
+</head>
+<body>
+        <script type="text/javascript" src="TableauSOpqEven.js"></script>
+        <script type="text/javascript" src="PageSOpqEven.js"></script>
+        <h2>SO(p,q) Even Algorithm
+                <span class="infoButtons">
+                <button type="button" class="toggleButton" onclick="toggleDiv(this)">Instructions</button>
+                <button type="button" class="toggleButton" onclick="toggleDiv(this)">Information</button>
+                </span>
+        </h2>
+
+        <div class="infoDiv" id="InstructionsDiv" style="display:none">
+                <p>
+                        The page can be used in two ways.&nbsp;
+                        First, you can have the page generate a random input parameter.&nbsp;
+                        To do that, enter the size of the parameter in the first textbox.&nbsp;
+                        Optionally, enter the number of pairs in the parameter in the second textbox.&nbsp;
+                        The number of pairs should be less than or equal to half the number chosen for n.
+                </p>
+                <p>
+                        After entering this information, click one of the two buttons directly to the right.&nbsp;
+                        The Run button will display a randomly-generated parameter and the output of the SO(p,q) Even Algorithm when applied to that parameter.&nbsp;
+                        Alternatively, the Run Steps button will also generate a random parameter, and will show you the intermediate steps of applying the SO(p,q) Even Algorithm to that parameter.
+                </p>
+                <p>
+                        Pressing Enter while in one of the textboxes will click the Run button to the right.&nbsp;
+                        Pressing a button a second time, or a different button, will clear the previous result as it gives you a new result, as will pressing Enter while in a textbox.
+                </p>
+                <p>
+                        You can also enter an input parameter in the textbox labelled "parameter".&nbsp;
+                        A parameter is an arrangement of the numbers 1 through n (with 2 * n = p + q), where each number is either a singleton or paired with another number.&nbsp;
+                        Any singleton number has a sign associated to it.&nbsp;
+                        There are two sets of signs to choose from, so for convenience, signs in the first set are written as + or -, and signs in the second set are written as s or t.&nbsp;
+                        In addition, each pair of numbers has a sign (or orientation) associated with it.&nbsp;
+                        So, for example, this is a parameter:&nbsp; 1s 4+ 5- 3_-6 8t 2_9 7_10 11+.&nbsp;
+                        The _ is used to indicate a pair of numbers.&nbsp;
+                        If a pair has the negative orientation, then the second number in the pair is written with a - sign.&nbsp;
+                        Specifically, this will be a parameter for SO(p,q) where p = 2 * (number of + signs) + 2 * (number of pairs) + (number of s signs) + (number of t signs), and similarly q = p = 2 * (number of - signs) + 2 * (number of pairs) + (number of s signs) + (number of t signs).&nbsp;
+                        So, the example above is a parameter for SO(12, 10).
+                </p>
+                <p>
+                        To enter a parameter in the parameter textbox, write the parameter as in the example, with spaces separating the pieces of the parameter.&nbsp;
+                        Then, use the Run or Run Steps buttons to the right of that box, as above.
+                </p>
+        </div>
+
+        <div class="infoDiv" id="InformationDiv" style="display:none">
+                <p>
+                        Warning:  this algorithm is still experimental.&nbsp;
+                        If you have questions about it, or other issues,
+                        please contact me at devra.johnson at verizon.net.
+                </p>
+                <p>
+                        This page displays a candidate for the algorithm for computing annihilators and associated varieties for irreducible Harish-Chandra modules for SO(p,q), with p + q even.&nbsp;
+                        The input to the SO(p,q) Even algorithm is a parameter for the irreducible Harish-Chandra module.&nbsp;
+                        For the purposes of this algorithm, if 2 * n = p + q, then a parameter takes the form of an arrangement of the numbers 1, ..., n, where each number is either a singleton or paired with another number.&nbsp;
+                        Any singleton number has a sign associated to it.&nbsp;
+                        There are two sets of signs to choose from, so for convenience, signs in the first set are written as + or -, and signs in the second set are written as s or t.&nbsp;
+                        In addition, each pair of numbers has a sign (or orientation) associated with it.&nbsp;
+                        So, for example, this is a parameter:&nbsp; 1s 4+ 5- 3_-6 8t 2_9 7_10 11+.&nbsp;
+                        The _ is used to indicate a pair of numbers.&nbsp;
+                        If a pair has the negative orientation, then the second number in the pair is written with a - sign.&nbsp;
+                        Specifically, this will be a parameter for SO(p,q) where p = 2 * (number of + signs) + 2 * (number of pairs) + (number of s signs) + (number of t signs), and similarly q = p = 2 * (number of - signs) + 2 * (number of pairs) + (number of s signs) + (number of t signs).&nbsp;
+                        So, the example above is a parameter for SO(12, 10).
+                </p>
+                <p>
+                        A parameter is determined by its pieces (that is, the number/sign combinations and number/number pairs).&nbsp;
+                        Unlike in a permutation, the order of the pieces doesn't matter.&nbsp;
+                        We will list the pieces in increasing numerical order, where this increasing order disregards the first number of any number pair, and just uses the second number to find its place.&nbsp;
+                        (The example parameter above is in this order.)&nbsp;
+                        The pieces of the parameter are used by the algorithm in this order.
+                </p>
+                <p>
+                        This algorithm is very connected to the duality which is defined in Vogan's paper, "Irreducible characters of semisimple Lie groups IV. Character-multiplicity duality".&nbsp;
+                        The form of the parameter which we are using is probably not the one which you would choose if you were just looking at one representation.&nbsp;
+                        Instead, if you take one of these parameters, interchange + and s, interchange - and t, and change the orientation of every pair, you will obtain the parameter for a representation which is dual to the original representation int the sense of the above-mentioned paper.
+                </p>
+                <p>
+                        The output of the SO(p,q) Even algorithm is two pairs of tableaux.&nbsp;
+                        The left tableau of each pair is a domino tableau with numbers, just as in the output to the Domino Robinson-Schensted algorithm.&nbsp;
+                        The right tableau of each pair is a sign tableau, which is used by the algorithm, and also can be used to derive the associated variety of an irreducible Harish-Chandra module.&nbsp;
+                        More precisely, the output of the algorithm is an equivalence class of such pairs of pairs of tableaux, with a complicated description of which such quadruples of tableaux can occur, and also a complicated description of the equivalence relationship.&nbsp;
+                        With this equivalence relationship, the algorithm is conjecturally a bijection.&nbsp;
+                        The left tableau of the first pair corresponds to the primitive idea which is the annihilator of the irreducible Harish-Chandra module associated to the parameter.&nbsp;
+                        The right tableau of the first pair describes the associated variety of this Harish-Chandra module.&nbsp;
+                        The left and right tableaux of the second pair correspond in the same way to the annihilator and associated variaty of a dual representation of the original Harish-Chandra module.
+                </p>
+                <p>
+                        Each of the four tableaux is presented on a grid of 2 x 2 squares.&nbsp;
+                        This grid is an important feature of the algorithm.&nbsp;
+                        It shows when a tableau shape is special, as well as how to go from special to non-special configurations of the number tableau, when required by the algorithm.&nbsp;
+                        SO(p,q), with p + q even, is of type D, and so for this algorithm, both tableaux are in the D position with respect to the grid.&nbsp;
+                        In the D position, the top-left corner of the tableau is in the top-right corner of a 2 x 2 square of the grid.
+                </p>
+                <p>
+                        Within a pair, the two tableaux (number tableau and sign tableau) have the same shape.&nbsp;
+                        The two number tableau are roughly (but not quite) transposes of each other.&nbsp;
+                        More precisely, you can obtain one from the other by taking a transpose and then moving through some of the open cycles.
+                </p>
+                <p>
+                        You can find out more about the basic ingredients of this algorithm, namely the Domino Robinson-Schensted algorithm and the procedure of moving through cycles, on my website <a href="https://devragj.github.io/" target="_blank">https://devragj.github.io/</a>.
+                </p>
+        </div>
+
+        <div id="Controls">
+                <span>n: <input type="text" id="nbox" size="6" onkeyup="randomKey(event)"></span>
+                <span>pairs: <input type="text" id="pbox" size="6" onkeyup="randomKey(event)"></span>
+                <span><button type="button" id="runRandomButton" class = "SmallButton" onclick="runInput()">Run</button></span>
+                <span><button type="button" class = "BigButton" onclick="runSteps()">Run Steps</button></span>
+                <span>parameter: <input type="text" id="parameterBox" size="50" onkeyup="parameterKey(event)"></span>
+                <span><button type="button" id="runParameterButton" class = "SmallButton" onclick="runParameter()">Run</button></span>
+                <span><button type="button" class = "BigButton" onclick="runParameterSteps()">Run Steps</button></span>
+        </div>
+</body>
+
+</html>
