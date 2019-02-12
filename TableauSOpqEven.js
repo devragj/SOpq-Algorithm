@@ -990,7 +990,7 @@ class SignTableau{
         hasPairFor(domino) {
                 let fs = domino.getFixedSquare();
                 if (getGridSubPos(fs) != "Y") {
-                        throw new Error ("This domino can't be paired.")
+                        throw new Error ("This domino can't be paired.");
                 }
 
                 if (this.get(fs.x + 1, fs.y + 1)) {
@@ -1333,7 +1333,7 @@ class SignTableau{
 
                 let currentColumn = x + 2;
                 while (true) {
-                        currentSign = oppositeSign(currentSign)
+                        currentSign = oppositeSign(currentSign);
                         currentDomino = this.get(currentColumn, currentRow);
                         if (!this.hasPairFor(currentDomino)) {
                                 return currentDomino;
@@ -1809,7 +1809,7 @@ class SignTableau{
                 this.moveBoxDown(x - 2, y - 2);
                 let box = this.get(x - 2, y - 2);
                 if (!box.box) {
-                        throw new Error("Trouble in moveBoxDown")
+                        throw new Error("Trouble in moveBoxDown");
                 }
 
                 this.boxHelperRemoveFromList(box);
@@ -1842,7 +1842,7 @@ class SignTableau{
                 this.moveBoxDown(x, y);
                 let box = this.get(x, y);
                 if (!box.box) {
-                        throw new Error("Bad input to unmakeBox")
+                        throw new Error("Bad input to unmakeBox");
                 }
 
                 this.boxHelperRemoveFromList(box);
@@ -1991,7 +1991,6 @@ class DualTableaux {
                 return {pos: pos, dpos: dpos};
         }
 }
-
 
 class Tableaux {
         constructor(tbl) {
@@ -2199,7 +2198,7 @@ class Tableaux {
                 let sign2 = stab2.getSign(y, x);
                 let signData = stab1.findSignInRowRight(y, x + 2);
                 if (signData.sign != sign1) {
-                        throw new Error("Wrong input to switchInRow")
+                        throw new Error("Wrong input to switchInRow");
                 }
 
                 let column1 = signData.column;
@@ -2248,7 +2247,7 @@ class Tableaux {
                 let y = fs.y;
                 let signData = stab1.findSignInColumnAbove(x, y - 2);
                 if (signData.sign != sign1) {
-                        throw new Error("Wrong input to switchInColumn")
+                        throw new Error("Wrong input to switchInColumn");
                 }
 
                 let row1 = signData.row;
@@ -2404,7 +2403,7 @@ class Tableaux {
                 }
         }
 
-        switchAfterAddX(domino1, put) {
+        switchAfterAddX(domino1) {
                 let sign1 = domino1.n;
                 let stab1;
                 let stab2;
@@ -2948,7 +2947,7 @@ class Tableaux {
                                         let downDomino2 = stab2.get(y - 1, signData.column);
                                         let sign2 = stab2.getSign(y, x - 2);
                                         let opSign2 = oppositeSign(sign2);
-                                        this.prepareForSign(downDomino2, opSign2)
+                                        this.prepareForSign(downDomino2, opSign2);
                                         domino1.n = "";
                                         rightDomino1.n = "";
                                         downDomino2.n = opSign2;
@@ -4047,7 +4046,6 @@ class Tableaux {
                                                         if (cycleTop.n != "") {
                                                                 // TODO new code
                                                                 sign1 = SignTableau.getExpectedSign(cycleTop, topDomino1);
-
                                                         } else {
                                                                 sign1 = signChoice;
                                                         }
@@ -4083,7 +4081,7 @@ class Tableaux {
                                         let x = pos.x;
                                         let y = pos.y;
                                         let domino = new Domino({n: number, x: x + 1, y: y, horiz: false});
-                                        let dualDomino = new Domino({n: number, x: y + 1, y: x, horiz: false})
+                                        let dualDomino = new Domino({n: number, x: y + 1, y: x, horiz: false});
                                         myTableaux.dualTabs.tab.insertAtEnd(domino);
                                         myTableaux.dualTabs.dtab.insertAtEnd(dualDomino);
                                         myTableaux.dualSignTabs.stab.putBox(x, y);
@@ -5136,7 +5134,6 @@ class Tableaux {
                                                         if (cycleTop.n != "") {
                                                                 // TODO new code
                                                                 sign1 = SignTableau.getExpectedSign(cycleTop, topDomino1);
-
                                                         } else {
                                                                 sign1 = signChoice;
                                                         }
@@ -5345,8 +5342,8 @@ class Tableaux {
                                                                 //  we need to pull that up sign down on side 2.
                                                                 // Once we've done that, adjacentDomino1 will be blank,
                                                                 // and we can move the sign1 from domino1 left into adjacentDomino1.
-                                                                let topDomino2 =  stab2.get(y, x - 1);
                                                                 if (upColSignData1 && upColSignData1.sign == opSign1) {
+                                                                        let topDomino2 =  stab2.get(y, x - 1);
                                                                         if (stab2.isBottomCorner(topDomino2)) {
                                                                                 let upColSignData2 = stab2.findSignInColumnAbove(y, x - 3);
                                                                                 let sign2 = upColSignData2.sign;
@@ -5487,7 +5484,7 @@ class Tableaux {
                                                         }
                                                 }
 
-                                                opSign1 = oppositeSign(sign1);
+                                                // opSign1 = oppositeSign(sign1);
                                                 domino1 = {n: sign1, x: x, y: y, horiz: true};
                                                 domino2 = {n: "", x: y, y: x, horiz: false};
                                                 stab1.putDomino(domino1);
@@ -5574,8 +5571,7 @@ class Tableaux {
                                         }
                                 }
 
-                                else if ((gridPos == "Z" && pos.horiz && dGridPos == "X")
-                                                || (dGridPos == "Z" && dpos.horiz && gridPos == "X")) {
+                                else if ((gridPos == "Z" && pos.horiz && dGridPos == "X") || (dGridPos == "Z" && dpos.horiz && gridPos == "X")) {
                                         let pos1;
                                         let pos2;
                                         let stab1;
@@ -5621,8 +5617,7 @@ class Tableaux {
                                         myTableaux.addNumberSign(number, sign1, y + 1);
                                 }
 
-                                else if ((gridPos == "Z" && pos.horiz && dGridPos == "Z" && myTableaux.dualSignTabs.stab.get(pos.x - 1, pos.y - 1).horiz)
-                                                || (dGridPos == "Z" && dpos.horiz && gridPos == "Z" && myTableaux.dualSignTabs.dstab.get(dpos.x - 1, dpos.y - 1).horiz)) {
+                                else if ((gridPos == "Z" && pos.horiz && dGridPos == "Z" && myTableaux.dualSignTabs.stab.get(pos.x - 1, pos.y - 1).horiz) || (dGridPos == "Z" && dpos.horiz && gridPos == "Z" && myTableaux.dualSignTabs.dstab.get(dpos.x - 1, dpos.y - 1).horiz)) {
                                         let pos1;
                                         let pos2;
                                         let stab1;
@@ -5658,8 +5653,8 @@ class Tableaux {
                                                 let adjacentSign1 = stab1.getSign(x - 2, y);
                                                 let pairDomino1 = stab1.get(x - 1, y - 1);
                                                 let pairDomino2 = stab2.get(y - 1, x - 1);
-                                                let domino1 = new Domino(pos1);
-                                                let domino2 = new Domino(pos2);
+                                                // let domino1 = new Domino(pos1);
+                                                // let domino2 = new Domino(pos2);
                                                 if (pairDomino1.n == "") {
                                                         // then adjacentDomino1.n == "" also
                                                         let lastDomino1 = stab1.get(signData.column, y - 1);
