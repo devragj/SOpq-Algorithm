@@ -5,7 +5,7 @@ span {
        display:inline-block;
        margin: 10px 20px;
 }
-span.infoButtons {
+infoButtons {
        /* display:inline-block; */
        margin: 0 0 0 20px;
 }
@@ -30,9 +30,9 @@ button:hover{
 }
 .infoDiv {
         margin: 10px 30px;
-        padding: 0px 20px;
+        padding: 0 20px;
         border: 1px solid black;
 }
 .toggleButton {
-        margin: 0px 20px;
+        margin: 0 20px;
 }

@@ -4011,7 +4011,7 @@ class Tableaux {
                                         let y = pos1.y;
 
                                         let rowLength = stab1.getRowLength(y + 1);
-                                        // make a new up cycle
+                                        // Add a box with both dominoes, and if necessary move it up.
                                         if (rowLength == x) {
                                                 let domino1 = new Domino({n: number, x: x, y: y + 1, horiz: true});
                                                 let domino2 = new Domino({n: number, x: y + 1, y: x, horiz: false});
@@ -4164,6 +4164,7 @@ class Tableaux {
                                                 // and the code to handle it, easier here.
                                                 //  TODO maybe not, this will disturb the invariant
                                                 // change this to use makeSpaceFor lower down?
+
                                                 let currentDomino2 = stab2.get(y, currentColumn1);
                                                 myTableaux.switchInRow(currentDomino2, stab2.getSign(y, x - 1));
                                         }
@@ -5099,7 +5100,7 @@ class Tableaux {
                                         let y = pos1.y;
 
                                         let rowLength = stab1.getRowLength(y + 1);
-                                        // make a new up cycle
+                                        // Add a box with both dominoes, and if necessary move it up.
                                         if (rowLength == x) {
                                                 let domino1 = new Domino({n: number, x: x, y: y + 1, horiz: true});
                                                 let domino2 = new Domino({n: number, x: y + 1, y: x, horiz: false});
@@ -5282,6 +5283,8 @@ class Tableaux {
                                                         if (upSign1 != "") {
                                                                 sign1 = upSign1;
                                                         }
+
+                                                        myTableaux.makeSpaceFor(adjacentDomino1, sign1);
                                                 }
 
                                                 domino1 = {n: sign1, x: x, y: y, horiz: true};
@@ -5825,6 +5828,7 @@ class Tableaux {
                                                         		myTableaux.openTwoCycles(otherTopDomino2, domino2, stab2, stab1, tab2, tab1);
                                                                 }
                                                         }
+                                                        
                                                         myTableaux.addNumberSign(number, sign1, rowAddSign1);
                                                 }  else { // rowAddSign1 == y - 1
                                                         let cornerDomino2 = stab2.get(y - 1, x - 1);
@@ -5893,6 +5897,7 @@ class Tableaux {
                                                                                         tab2.moveOpenCycle({x: y, y: x + 1});
                                                                                 }
                                                                         }
+
                                                                         domino1.n = number;
                                                                         domino2.n = number;
                                                                         tab1.insertAtEnd(domino1);

@@ -85,7 +85,7 @@ body {
         height: 60px;
         border-style: solid;
         border-color: #135396;
-        border-width: 0px;
+        border-width: 0;
         border-top-width: 1px;
         border-left-width: 1px;
         position: absolute;
