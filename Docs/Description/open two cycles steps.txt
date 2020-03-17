@@ -1,0 +1,27 @@
+First step, move the inner unboxed number cycle to be boxed
+if (!targetDomino1.isBoxed()) {
+                        tab1.moveOpenCycle({x: targetDomino1.x, y: targetDomino1.y + 1});
+                } else {
+                        tab2.moveOpenCycleToSquare({x: targetDomino1.y + 1, y: targetDomino1.x});
+                }
+
+next call openUpPaired()
+
+Now we're in openUpPaired()
+
+We call getCornerData()
+In getCornerData(), we move right in the row and up the column.
+If there is a blank domino in the row, we record the sign on the dual side.
+If there is a signed domino in the column, we record it.
+(Note, these two are both column signs, thus constant.)
+We find the next top domino (after going along a row and up a column).
+
+Once out of getCornerData(), we can start unmaking boxes.
+We do that along the row, at the corner, and up the column.
+Once we've unmade the boxes, we need to put signs in on one side or the other.
+(TODO check the procedure for this.)
+
+The newTopDomino used to be vertical, at the top of the column.
+Now that the boxes are unmade, it is horizontal.
+(Unless we've reached the end, it will not stay the in the upper cycle.
+Next stage, it goes to the lower cycle.)

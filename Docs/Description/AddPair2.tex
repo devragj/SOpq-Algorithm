@@ -1,0 +1,495 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{euscript}
+\usepackage{mathrsfs}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{boldline}
+\usepackage{indentfirst}
+\usepackage{environ}
+\usepackage{courier}
+\usetikzlibrary{positioning}
+
+\renewcommand{\labelitemii}{$\vartriangleright$}
+\renewcommand{\labelitemiv}{$\Join$}
+
+\makeatletter
+\newsavebox{\measure@tikzpicture}
+\NewEnviron{scaletikzpicturetowidth}[1]{%
+  \def\tikz@width{#1}%
+  \def\tikzscale{1}\begin{lrbox}{\measure@tikzpicture}%
+  \BODY
+  \end{lrbox}%
+  \pgfmathparse{#1/\wd\measure@tikzpicture}%
+  \edef\tikzscale{\pgfmathresult}%
+  \BODY
+}
+\makeatother
+
+\numberwithin{equation}{section}
+
+\hypersetup{
+    colorlinks=true,
+    % linkcolor=blue,
+    linkcolor=[RGB]{0,0,128},
+    % filecolor=[RGB]{0,0,128},
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor = [RGB]{128,0,128}
+}
+
+\newcommand{\myref}[2]{\hyperref[#2]{#1 \ref*{#2}}}
+\newcommand{\myrefT}[1]{\hyperref[#1]{Theorem \ref*{#1}}}
+\newcommand{\myrefP}[1]{\hyperref[#1]{Proposition \ref*{#1}}}
+\newcommand{\myrefL}[1]{\hyperref[#1]{Lemma \ref*{#1}}}
+\newcommand{\myrefD}[1]{\hyperref[#1]{Definition \ref*{#1}}}
+\newcommand{\myrefn}[3]{\hyperref[#2]{#1 \ref*{#2} (#3)}}
+
+% \input{dynkinMacros.tex}
+% \input{dynkinEMacros.tex}
+\input{commands8.tex}
+\input{tableauMacros.tex}
+\newcommand{\euscr}{\EuScript}
+
+\newcommand{\upLineLabel}[4]{\draw[-, thick, #1] (#2.north) -- node[right]{$#4$} (#3.south);}
+\newcommand{\sideLine}[3]{\draw[-, thick, dashdotted, #1] (#2.east) -- (#3.west);}
+
+\newcommand{\bdot}{\begin{tikzpicture}[close]
+  \filldraw (0, 0) circle (3pt);
+\end{tikzpicture}
+}
+\newcommand{\upLineLabelPos}[5]{\draw[-, thick, #1] (#2.north) -- node[#5]{$#4$} (#3.south);}
+\newcommand{\sideLineStyle}[4]{\draw[-, thick, #1, #2] (#3.east) -- (#4.west);}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+
+\newcommand{\upperLabel}[1]{\node[draw, brown, text = black, inner sep = .3cm] at (current bounding box.north) {\Large{#1}};}
+
+\tikzstyle{dominoMaybeStyle} = [color=blue, dashed, fill=white, rounded corners = .1cm, thick]
+
+\newcommand{\horizontalDominoMaybe}[3]{\filldraw [dominoMaybeStyle] (#2 - 1 + \eps, #1 - 1 + \eps) rectangle + (2 - \teps, 1 -\teps) node [dominoText] {$#3$};}
+\newcommand{\verticalDominoMaybe}[3]{\filldraw [dominoMaybeStyle] (#2 - 1 + \eps,  #1 - 1 + \eps) rectangle + (1 - \teps,2 -\teps) node [dominoText] {$#3$};}
+\newcommand{\horizontalDominoMaybeShift}[4]{\filldraw [dominoMaybeStyle] (#2 - 1 + #4 + \eps, #1 - 1 + \eps) rectangle + (2 - \teps, 1 -\teps) node [dominoText] {$#3$};}
+\newcommand{\verticalDominoMaybeShift}[4]{\filldraw [dominoMaybeStyle] (#2 - 1 + #4 + \eps,  #1 - 1 + \eps) rectangle + (1 - \teps,2 -\teps) node [dominoText] {$#3$};}
+
+\newcommand{\greenCircle}[2]{\filldraw[green] (#2 - .5, #1 - .5) circle (.2cm);}
+
+\definecolor{dominoHighlight}{HTML}{BBFFBB}
+\tikzstyle{dominoRSStyle} = [fill=dominoHighlight, rounded corners = .1cm, thick, opacity=0.6]
+\newcommand{\horizontalDominoRS}[3]{\filldraw [dominoRSStyle] (#2 - 1 + \eps, #1 - 1 + \eps) rectangle + (2 - \teps, 1 -\teps) node [dominoText] {$#3$};}
+\newcommand{\verticalDominoRS}[3]{\filldraw [dominoRSStyle] (#2 - 1 + \eps,  #1 - 1 + \eps) rectangle + (1 - \teps,2 -\teps) node [dominoText] {$#3$};}
+\newcommand{\horizontalDominoRSShift}[4]{\filldraw [dominoRSStyle] (#2 - 1 + #4 + \eps, #1 - 1 + \eps) rectangle + (2 - \teps, 1 -\teps) node [dominoText] {$#3$};}
+\newcommand{\verticalDominoRSShift}[4]{\filldraw [dominoRSStyle] (#2 - 1 + #4 + \eps,  #1 - 1 + \eps) rectangle + (1 - \teps,2 -\teps) node [dominoText] {$#3$};}
+
+% \newcommand{\pos}{\texttt{position}}
+% \newcommand{\dpos}{\texttt{dualPosition}}
+\newcommand{\pos}{$position$}
+\newcommand{\dpos}{$dualPosition$}
+
+\setlist[itemize]{listparindent=1.25em, parsep=0pt}
+
+\begin{document}
+  Continuing where we left off:
+  \begin{itemize}
+    \item Here $gpos$ and $dgpos$ are both $Z$, and both \pos\ and \dpos\ are horizontal.
+    In this situation, we have broken a cycle into two, on both sides.
+    There are two overall possibilities.
+    \begin{itemize}
+      \item In this case, on one side, the column is all ($+$) signs.
+      We'll add the domino there, with a $-$ sign,
+      box up, and then continue down with a plus sign.
+      \begin{figure}[H]
+        % 2+ 3+ 4-
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{2}\verticalDomino{1}{2}{2}\verticalDomino{3}{2}{3}\horizontalDomino{1}{3}{4}\fixedSquaresForGrid{2}{2}
+        \gridLinesShift{2}{2}{5}\verticalDominoShift{1}{2}{+}{5}\verticalDominoShift{3}{2}{+}{5}\horizontalDominoShift{1}{3}{-}{5}
+        \horizontalDominoRSShift{2}{3}{}{5}
+        \fixedSquaresForGridShift{2}{2}{5}
+        \gridLinesShift{2}{2}{11}\verticalDominoShift{1}{2}{2}{11}\horizontalDominoShift{1}{3}{3}{11}\verticalDominoShift{3}{2}{4}{11}\fixedSquaresForGridShift{2}{2}{11}
+        \gridLinesShift{2}{2}{16}\verticalDominoShift{1}{2}{}{16}\horizontalDominoShift{1}{3}{}{16}\verticalDominoShift{3}{2}{}{16}
+        \horizontalDominoRSShift{2}{3}{}{16}
+        \fixedSquaresForGridShiftAlt{2}{2}{16}\end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        % 2+ 3+ 4- 1_5
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{3}{2}\horizontalDomino{1}{2}{1}\horizontalDomino{2}{2}{2}\verticalDomino{3}{2}{3}\verticalDomino{1}{4}{4}\verticalDomino{5}{2}{5}\fixedSquaresForGrid{3}{2}\gridLinesShift{3}{2}{5}\verticalDominoShift{3}{2}{+}{5}\verticalDominoShift{1}{4}{-}{5}\emptyBoxShift{1}{2}{5}\verticalDominoShift{5}{2}{+}{5}\fixedSquaresForGridShift{3}{2}{5}\gridLinesShift{2}{3}{11}\verticalDominoShift{1}{2}{1}{11}\verticalDominoShift{1}{3}{2}{11}\verticalDominoShift{1}{4}{3}{11}\verticalDominoShift{3}{2}{4}{11}\horizontalDominoShift{1}{5}{5}{11}\fixedSquaresForGridShift{2}{3}{11}\gridLinesShift{2}{3}{18}\verticalDominoShift{1}{4}{}{18}\verticalDominoShift{3}{2}{}{18}\emptyBoxShift{1}{2}{18}\horizontalDominoShift{1}{5}{}{18}\fixedSquaresForGridShiftAlt{2}{3}{18}\end{tikzpicture}
+      \end{figure}
+
+      \item In this case, the side with a blank corner has a sign in the row of interest.
+      Otherwise said, the side with a sign in the corner has a blank in its side column.
+      We'll be moving the blank up to the corner.
+      If the blank initially was in a bottom corner, we'll need to call \texttt{prepareForSign()} to place the corner's sign there.
+      After this exchange, on the dual side the corner will have a sign.
+      We'll match that sign, box things up, and then add the opposite sign below (on the dual side).
+      Here are two examples.
+      \begin{figure}[H]
+        % 2s 3+ 4s
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{2}\verticalDomino{1}{2}{2}\horizontalDomino{1}{3}{3}\verticalDomino{3}{2}{4}\fixedSquaresForGrid{2}{2}
+        \gridLinesShift{2}{2}{5}\verticalDominoShift{1}{2}{+}{5}\horizontalDominoShift{1}{3}{}{5}\verticalDominoShift{3}{2}{}{5}
+        \horizontalDominoRSShift{2}{3}{}{5}
+        \fixedSquaresForGridShift{2}{2}{5}
+        \gridLinesShift{2}{2}{11}\verticalDominoShift{1}{2}{2}{11}\verticalDominoShift{3}{2}{3}{11}\horizontalDominoShift{1}{3}{4}{11}\fixedSquaresForGridShift{2}{2}{11}\gridLinesShift{2}{2}{16}\verticalDominoShift{1}{2}{}{16}\verticalDominoShift{3}{2}{s}{16}\horizontalDominoShift{1}{3}{s}{16}
+        \horizontalDominoRSShift{2}{3}{}{16}
+        \fixedSquaresForGridShiftAlt{2}{2}{16}
+        \end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        % 2s 3+ 4s
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{2}\verticalDomino{1}{2}{2}\horizontalDomino{1}{3}{3}\verticalDomino{3}{2}{4}\fixedSquaresForGrid{2}{2}
+        \gridLinesShift{2}{2}{5}
+        \verticalDominoShift{1}{2}{}{5}
+        \horizontalDominoShift{1}{3}{}{5}
+        \verticalDominoShift{3}{2}{+}{5}
+        \horizontalDominoRSShift{2}{3}{}{5}
+        \fixedSquaresForGridShift{2}{2}{5}
+        \gridLinesShift{2}{2}{11}\verticalDominoShift{1}{2}{2}{11}\verticalDominoShift{3}{2}{3}{11}\horizontalDominoShift{1}{3}{4}{11}\fixedSquaresForGridShift{2}{2}{11}
+        \gridLinesShift{2}{2}{16}
+        \verticalDominoShift{1}{2}{s}{16}
+        \verticalDominoShift{3}{2}{s}{16}
+        \horizontalDominoShift{1}{3}{}{16}
+        \horizontalDominoRSShift{2}{3}{t}{16}
+        \fixedSquaresForGridShiftAlt{2}{2}{16}
+        \end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        % 2s 3+ 4s 1_5
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{3}\horizontalDomino{1}{2}{1}\horizontalDomino{2}{2}{2}\verticalDomino{1}{4}{3}\verticalDomino{3}{2}{4}\horizontalDomino{1}{5}{5}\fixedSquaresForGrid{2}{3}\gridLinesShift{2}{3}{7}\verticalDominoShift{1}{4}{}{7}\verticalDominoShift{3}{2}{+}{7}\emptyBoxShift{1}{2}{7}\horizontalDominoShift{1}{5}{}{7}\fixedSquaresForGridShift{2}{3}{7}\gridLinesShift{3}{2}{15}\verticalDominoShift{1}{2}{1}{15}\verticalDominoShift{1}{3}{2}{15}\verticalDominoShift{3}{2}{3}{15}\verticalDominoShift{1}{4}{4}{15}\verticalDominoShift{5}{2}{5}{15}\fixedSquaresForGridShift{3}{2}{15}\gridLinesShift{3}{2}{20}\verticalDominoShift{3}{2}{s}{20}\verticalDominoShift{1}{4}{}{20}\emptyBoxShift{1}{2}{20}\verticalDominoShift{5}{2}{s}{20}\fixedSquaresForGridShiftAlt{3}{2}{20}\end{tikzpicture}
+      \end{figure}
+      Here's the second example.
+      \begin{figure}[H]
+        % 2+ 3- 4s
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{2}\verticalDomino{1}{2}{2}\horizontalDomino{1}{3}{3}\verticalDomino{3}{2}{4}\fixedSquaresForGrid{2}{2}\gridLinesShift{2}{2}{5}\verticalDominoShift{1}{2}{+}{5}\horizontalDominoShift{1}{3}{-}{5}\verticalDominoShift{3}{2}{}{5}
+        \horizontalDominoRSShift{2}{3}{}{5}
+        \fixedSquaresForGridShift{2}{2}{5}\gridLinesShift{2}{2}{11}\verticalDominoShift{1}{2}{2}{11}\verticalDominoShift{3}{2}{3}{11}\horizontalDominoShift{1}{3}{4}{11}\fixedSquaresForGridShift{2}{2}{11}
+        \gridLinesShift{2}{2}{16}\verticalDominoShift{1}{2}{}{16}\verticalDominoShift{3}{2}{}{16}\horizontalDominoShift{1}{3}{s}{16}\fixedSquaresForGridShiftAlt{2}{2}{16}
+        \horizontalDominoRSShift{2}{3}{}{16}
+        \end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        % 2+ 3- 4s
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]
+          \gridLines{2}{2}\verticalDomino{1}{2}{2}\horizontalDomino{1}{3}{3}\verticalDomino{3}{2}{4}\fixedSquaresForGrid{2}{2}
+          \gridLinesShift{2}{2}{5}
+          \verticalDominoShift{1}{2}{}{5}
+          \horizontalDominoShift{1}{3}{-}{5}
+          \verticalDominoShift{3}{2}{+}{5}
+          \horizontalDominoRSShift{2}{3}{}{5}
+          \fixedSquaresForGridShift{2}{2}{5}
+          \gridLinesShift{2}{2}{11}\verticalDominoShift{1}{2}{2}{11}\verticalDominoShift{3}{2}{3}{11}\horizontalDominoShift{1}{3}{4}{11}\fixedSquaresForGridShift{2}{2}{11}
+          \gridLinesShift{2}{2}{16}
+          \verticalDominoShift{1}{2}{s}{16}
+          \verticalDominoShift{3}{2}{}{16}
+          \horizontalDominoShift{1}{3}{}{16}
+          \horizontalDominoRSShift{2}{3}{t}{16}
+          \fixedSquaresForGridShiftAlt{2}{2}{16}
+        \end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        % 2+ 3- 4s 1_5
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{2}\horizontalDomino{1}{2}{1}\horizontalDomino{2}{2}{2}\verticalDomino{1}{4}{3}\verticalDomino{3}{2}{4}\horizontalDomino{3}{3}{5}\fixedSquaresForGrid{2}{2}\gridLinesShift{2}{2}{5}\verticalDominoShift{1}{4}{-}{5}\verticalDominoShift{3}{2}{+}{5}\emptyBoxShift{1}{2}{5}\horizontalDominoShift{3}{3}{}{5}\fixedSquaresForGridShift{2}{2}{5}\gridLinesShift{2}{2}{11}\verticalDominoShift{1}{2}{1}{11}\verticalDominoShift{1}{3}{2}{11}\verticalDominoShift{3}{2}{3}{11}\verticalDominoShift{1}{4}{4}{11}\horizontalDominoShift{3}{3}{5}{11}\fixedSquaresForGridShift{2}{2}{11}\gridLinesShift{2}{2}{16}\verticalDominoShift{3}{2}{}{16}\verticalDominoShift{1}{4}{}{16}\emptyBoxShift{1}{2}{16}\horizontalDominoShift{3}{3}{s}{16}\fixedSquaresForGridShiftAlt{2}{2}{16}\end{tikzpicture}
+      \end{figure}
+    \end{itemize}
+
+    \item Here $gpos = Z$ and $dgpos = X$ and \pos\ is horizontal.
+    Here we are contracting a Type I cycle which is just one row/column.
+    Here are the cases:
+    \begin{itemize}
+      \item Here the column on the dual side is filled with ($s$) signs.
+      We place a $t$ sign on the dual side, box up, and move down on the dual side with an $s$ sign.
+      \begin{figure}[H]
+        % 2s 3s
+        \centering
+        \begin{tikzpicture}[tableau, scale=.6]\gridLines{1}{2}\verticalDomino{1}{2}{2}\horizontalDomino{1}{3}{3}\fixedSquaresForGrid{1}{2}
+        \gridLinesShift{1}{2}{5}
+        \verticalDominoShift{1}{2}{}{5}
+        \horizontalDominoShift{1}{3}{}{5}
+        \horizontalDominoRSShift{2}{3}{}{5}
+        \fixedSquaresForGridShift{1}{2}{5}
+        \gridLinesShift{2}{1}{11}\verticalDominoShift{1}{2}{2}{11}\verticalDominoShift{3}{2}{3}{11}\fixedSquaresForGridShift{2}{1}{11}
+        \gridLinesShift{2}{2}{14}
+        \verticalDominoShift{1}{2}{s}{14}
+        \verticalDominoRSShift{1}{3}{t}{14}
+        \verticalDominoShift{3}{2}{s}{14}
+        \fixedSquaresForGridShiftAlt{2}{2}{14}
+        \end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        % 2s 3s 1_4
+        \centering
+        \begin{tikzpicture}[tableau, scale=.6]\gridLines{1}{3}\horizontalDomino{1}{2}{1}\horizontalDomino{2}{2}{2}\verticalDomino{1}{4}{3}\horizontalDomino{1}{5}{4}\fixedSquaresForGrid{1}{3}\gridLinesShift{1}{3}{7}\verticalDominoShift{1}{4}{}{7}\emptyBoxShift{1}{2}{7}\horizontalDominoShift{1}{5}{}{7}\fixedSquaresForGridShift{1}{3}{7}\gridLinesShift{3}{2}{15}\verticalDominoShift{1}{2}{1}{15}\verticalDominoShift{1}{3}{2}{15}\verticalDominoShift{3}{2}{3}{15}\verticalDominoShift{5}{2}{4}{15}\fixedSquaresForGridShift{3}{2}{15}\gridLinesShift{3}{2}{20}\verticalDominoShift{3}{2}{s}{20}\emptyBoxShift{1}{2}{20}\verticalDominoShift{5}{2}{s}{20}\fixedSquaresForGridShiftAlt{3}{2}{20}\end{tikzpicture}
+      \end{figure}
+
+      \item Here the column on the dual side has a blank in it.
+      If the top corner on the dual side has an $s$ sign in it, we use \texttt{findRowToAddSignX()} on the dual side, where the sign is $s$, to move the blank up to the top corner.
+      At this point, the top corner on the original side has a ($+$) sign in it, so we add a $-$ sign, box up, and move down with a $+$ sign.
+      \begin{figure}[H]
+        % 2s 3+
+        \centering
+        \begin{tikzpicture}[tableau, scale=.6]\gridLines{1}{2}\verticalDomino{1}{2}{2}\horizontalDomino{1}{3}{3}\fixedSquaresForGrid{1}{2}
+        \gridLinesShift{1}{2}{5}
+        \verticalDominoShift{1}{2}{}{5}
+        \horizontalDominoShift{1}{3}{+}{5}
+        \horizontalDominoRSShift{2}{3}{}{5}
+        \fixedSquaresForGridShift{1}{2}{5}
+        \gridLinesShift{2}{1}{11}\verticalDominoShift{1}{2}{2}{11}\verticalDominoShift{3}{2}{3}{11}\fixedSquaresForGridShift{2}{1}{11}
+        \gridLinesShift{2}{2}{14}
+        \verticalDominoShift{1}{2}{s}{14}
+        \verticalDominoRSShift{1}{3}{}{14}
+        \verticalDominoShift{3}{2}{}{14}
+        \fixedSquaresForGridShiftAlt{2}{2}{14}\end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        % 2s 3+
+        \centering
+        \begin{tikzpicture}[tableau, scale=.6]\gridLines{1}{2}\verticalDomino{1}{2}{2}\horizontalDomino{1}{3}{3}\fixedSquaresForGrid{1}{2}
+        \gridLinesShift{1}{2}{5}
+        \verticalDominoShift{1}{2}{+}{5}
+        \horizontalDominoShift{1}{3}{}{5}
+        \horizontalDominoRSShift{2}{3}{-}{5}
+        \fixedSquaresForGridShift{1}{2}{5}
+        \gridLinesShift{2}{1}{11}\verticalDominoShift{1}{2}{2}{11}\verticalDominoShift{3}{2}{3}{11}\fixedSquaresForGridShift{2}{1}{11}
+        \gridLinesShift{2}{2}{14}
+        \verticalDominoShift{1}{2}{}{14}
+        \verticalDominoRSShift{1}{3}{}{14}
+        \verticalDominoShift{3}{2}{s}{14}
+        \fixedSquaresForGridShiftAlt{2}{2}{14}\end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        % 2s 3+ 1_4
+        \centering
+        \begin{tikzpicture}[tableau, scale=.6]\gridLines{2}{2}\horizontalDomino{1}{2}{1}\horizontalDomino{2}{2}{2}\verticalDomino{1}{4}{3}\verticalDomino{3}{2}{4}\fixedSquaresForGrid{2}{2}\gridLinesShift{2}{2}{5}\verticalDominoShift{1}{4}{}{5}\emptyBoxShift{1}{2}{5}\verticalDominoShift{3}{2}{+}{5}\fixedSquaresForGridShift{2}{2}{5}\gridLinesShift{2}{2}{11}\verticalDominoShift{1}{2}{1}{11}\verticalDominoShift{1}{3}{2}{11}\verticalDominoShift{3}{2}{3}{11}\verticalDominoShift{1}{4}{4}{11}\fixedSquaresForGridShift{2}{2}{11}\gridLinesShift{2}{2}{16}\verticalDominoShift{3}{2}{s}{16}\emptyBoxShift{1}{2}{16}\verticalDominoShift{1}{4}{}{16}\fixedSquaresForGridShiftAlt{2}{2}{16}\end{tikzpicture}
+      \end{figure}
+    \end{itemize}
+
+    \item Here $gpos = Z$ and $dgpos = Z$ and \pos\ is horizontal and the pair domino (occupying square $(x - 1, y - 1)$) is also horizontal.
+    So, we are extending a boxed Type II cycle.
+    The pair domino is currently unpaired, so it must be the cycle top.
+    The domino to the right of the pair domino will become the new cycle top.
+    Here are the cases.
+    \begin{itemize}
+      \item Here the pair domino and all the dominoes in its row are blank.
+      We match the sign ($s$) in the corresponding column on the dual side with a $t$, and then go down on the dual side with an $s$.
+      \begin{figure}[H]
+        % 1+ 2t 4t 3_6
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{3}\verticalDomino{1}{2}{1}\verticalDomino{3}{2}{2}\horizontalDomino{1}{3}{3}\horizontalDomino{2}{3}{4}\horizontalDomino{1}{5}{6}\fixedSquaresForGrid{2}{3}
+        \gridLinesShift{2}{3}{7}
+        \verticalDominoShift{1}{2}{}{7}
+        \verticalDominoShift{3}{2}{+}{7}
+        \horizontalDominoShift{1}{3}{}{7}
+        \horizontalDominoShift{2}{3}{}{7}
+        \horizontalDominoRSShift{2}{5}{}{7}
+        \horizontalDominoShift{1}{5}{}{7}
+        \fixedSquaresForGridShift{2}{3}{7}
+        \gridLinesShift{3}{2}{15}\verticalDominoShift{1}{2}{1}{15}\horizontalDominoShift{1}{3}{2}{15}\verticalDominoShift{3}{2}{3}{15}\verticalDominoShift{2}{3}{4}{15}\verticalDominoShift{5}{2}{6}{15}\fixedSquaresForGridShift{3}{2}{15}
+        \gridLinesShift{3}{2}{20}
+        \verticalDominoShift{1}{2}{s}{20}
+        \horizontalDominoShift{1}{3}{}{20}
+        \verticalDominoShift{3}{2}{s}{20}
+        \verticalDominoShift{2}{3}{t}{20}
+        \verticalDominoRSShift{4}{3}{t}{20}
+        \verticalDominoShift{5}{2}{s}{20}
+        \fixedSquaresForGridShiftAlt{3}{2}{20}
+      \end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        % 1+ 2t 4t 3_6 5_7
+        \centering
+        \begin{tikzpicture}[tableau, scale=.5]\gridLines{2}{4}\verticalDomino{1}{2}{1}\verticalDomino{3}{2}{2}\horizontalDomino{1}{3}{3}\horizontalDomino{2}{3}{4}\horizontalDomino{1}{5}{5}\horizontalDomino{2}{5}{6}\horizontalDomino{1}{7}{7}\fixedSquaresForGrid{2}{4}\gridLinesShift{2}{4}{9}\verticalDominoShift{1}{2}{}{9}\verticalDominoShift{3}{2}{+}{9}\horizontalDominoShift{1}{3}{}{9}\horizontalDominoShift{2}{3}{}{9}\horizontalDominoShift{1}{5}{}{9}\horizontalDominoShift{2}{5}{}{9}\horizontalDominoShift{1}{7}{}{9}\fixedSquaresForGridShift{2}{4}{9}\gridLinesShift{4}{2}{19}\verticalDominoShift{1}{2}{1}{19}\horizontalDominoShift{1}{3}{2}{19}\verticalDominoShift{3}{2}{3}{19}\verticalDominoShift{2}{3}{4}{19}\verticalDominoShift{5}{2}{5}{19}\verticalDominoShift{4}{3}{6}{19}\verticalDominoShift{7}{2}{7}{19}\fixedSquaresForGridShift{4}{2}{19}
+        \gridLinesShift{4}{2}{24}\verticalDominoShift{1}{2}{s}{24}\horizontalDominoShift{1}{3}{}{24}\verticalDominoShift{3}{2}{s}{24}\verticalDominoShift{2}{3}{t}{24}\verticalDominoShift{5}{2}{s}{24}\verticalDominoShift{4}{3}{t}{24}\verticalDominoShift{7}{2}{s}{24}\fixedSquaresForGridShiftAlt{4}{2}{24}\end{tikzpicture}
+      \end{figure}
+
+      \item Here the pair domino is blank and one of the dominoes in the pair domino's row has a sign ($+$) in it.
+      We swap its sign into the pair domino, first calling \texttt{prepareForSign()} on the dual side.
+      We give the newly-added domino a $-$ sign, and then blank the $+$ and $-$ signs.
+      (This is philosophical.  Concretely, we carry this out in fewer steps.)
+      We then go down with a $+$ sign.
+      \begin{figure}[H]
+        % 1+ 2s 3_4 6+
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{3}\verticalDomino{1}{2}{1}\verticalDomino{3}{2}{2}\horizontalDomino{1}{3}{3}\horizontalDomino{2}{3}{4}\horizontalDomino{1}{5}{6}\fixedSquaresForGrid{2}{3}
+        \gridLinesShift{2}{3}{7}
+        \verticalDominoShift{1}{2}{}{7}
+        \verticalDominoShift{3}{2}{+}{7}
+        \horizontalDominoShift{1}{3}{}{7}
+        \horizontalDominoShift{2}{3}{}{7}
+        \horizontalDominoRSShift{2}{5}{}{7}
+        \horizontalDominoShift{1}{5}{+}{7}
+        \fixedSquaresForGridShift{2}{3}{7}
+        \gridLinesShift{3}{2}{15}\verticalDominoShift{1}{2}{1}{15}\horizontalDominoShift{1}{3}{2}{15}\verticalDominoShift{3}{2}{3}{15}\verticalDominoShift{2}{3}{4}{15}\verticalDominoShift{5}{2}{6}{15}\fixedSquaresForGridShift{3}{2}{15}
+        \gridLinesShift{3}{2}{20}
+        \verticalDominoShift{1}{2}{s}{20}
+        \horizontalDominoShift{1}{3}{}{20}
+        \verticalDominoShift{3}{2}{s}{20}
+        \verticalDominoShift{2}{3}{t}{20}
+        \verticalDominoRSShift{4}{3}{}{20}
+        \verticalDominoShift{5}{2}{}{20}
+        \fixedSquaresForGridShiftAlt{3}{2}{20}
+        \end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        % 1+ 2s 3_4 6+
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{3}\verticalDomino{1}{2}{1}\verticalDomino{3}{2}{2}\horizontalDomino{1}{3}{3}\horizontalDomino{2}{3}{4}\horizontalDomino{1}{5}{6}\fixedSquaresForGrid{2}{3}
+        \gridLinesShift{2}{3}{7}
+        \verticalDominoShift{1}{2}{}{7}
+        \verticalDominoShift{3}{2}{+}{7}
+        \horizontalDominoShift{1}{3}{+}{7}
+        \horizontalDominoShift{2}{3}{}{7}
+        \horizontalDominoRSShift{2}{5}{-}{7}
+        \horizontalDominoShift{1}{5}{}{7}
+        \fixedSquaresForGridShift{2}{3}{7}
+        \gridLinesShift{3}{2}{15}\verticalDominoShift{1}{2}{1}{15}\horizontalDominoShift{1}{3}{2}{15}\verticalDominoShift{3}{2}{3}{15}\verticalDominoShift{2}{3}{4}{15}\verticalDominoShift{5}{2}{6}{15}\fixedSquaresForGridShift{3}{2}{15}
+        \gridLinesShift{3}{2}{20}
+        \verticalDominoShift{1}{2}{s}{20}
+        \horizontalDominoShift{1}{3}{}{20}
+        \verticalDominoShift{3}{2}{}{20}
+        \verticalDominoShift{2}{3}{t}{20}
+        \verticalDominoRSShift{4}{3}{}{20}
+        \verticalDominoShift{5}{2}{s}{20}
+        \fixedSquaresForGridShiftAlt{3}{2}{20}
+        \end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        % 1+ 2s 3_4 6+ 5_7
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{3}{3}\verticalDomino{1}{2}{1}\verticalDomino{3}{2}{2}\horizontalDomino{1}{3}{3}\horizontalDomino{2}{3}{4}\horizontalDomino{1}{5}{5}\horizontalDomino{2}{5}{6}\verticalDomino{5}{2}{7}\fixedSquaresForGrid{3}{3}\gridLinesShift{3}{3}{7}\verticalDominoShift{1}{2}{}{7}\verticalDominoShift{3}{2}{+}{7}\horizontalDominoShift{1}{3}{}{7}\horizontalDominoShift{2}{3}{}{7}\horizontalDominoShift{1}{5}{}{7}\horizontalDominoShift{2}{5}{}{7}\verticalDominoShift{5}{2}{+}{7}\fixedSquaresForGridShift{3}{3}{7}\gridLinesShift{3}{3}{15}\verticalDominoShift{1}{2}{1}{15}\horizontalDominoShift{1}{3}{2}{15}\verticalDominoShift{3}{2}{3}{15}\verticalDominoShift{2}{3}{4}{15}\verticalDominoShift{5}{2}{5}{15}\verticalDominoShift{4}{3}{6}{15}\horizontalDominoShift{1}{5}{7}{15}\fixedSquaresForGridShift{3}{3}{15}\gridLinesShift{3}{3}{22}\verticalDominoShift{1}{2}{s}{22}\horizontalDominoShift{1}{3}{}{22}\verticalDominoShift{3}{2}{s}{22}\verticalDominoShift{2}{3}{t}{22}\verticalDominoShift{5}{2}{s}{22}\verticalDominoShift{4}{3}{t}{22}\horizontalDominoShift{1}{5}{}{22}\fixedSquaresForGridShiftAlt{3}{3}{22}\end{tikzpicture}
+      \end{figure}
+
+      \item Here the pair domino has a ($+$) sign.
+      Recall, the pair domino is currently the cycle top.
+      The domino to the right of the pair domino (called the top domino) will become the new cycle top.
+      There are two possible complications.
+      One is that the cycle is currently in the difficult situation, namely that the paired dominoes in the cycle are blank on this side.
+      The other is that the top domino is blank.
+      So, we have four cases.
+      In all the cases, we will effectively add a $-$ sign and then go down with a $+$ sign.
+      \begin{itemize}
+        \item Here the paired dominoes in the cycle have signs and the top domino has a sign (which must be $-$).
+        This is the easy case.
+        We put a $-$ sign in the new domino.
+        \begin{figure}[H]
+          % 1- 2- 3+ 4+ 6-
+          \centering
+          \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{3}\verticalDomino{1}{2}{1}\verticalDomino{3}{2}{2}\horizontalDomino{1}{3}{3}\horizontalDomino{2}{3}{4}\horizontalDomino{1}{5}{6}\fixedSquaresForGrid{2}{3}
+          \gridLinesShift{2}{3}{7}\verticalDominoShift{1}{2}{-}{7}\verticalDominoShift{3}{2}{-}{7}\horizontalDominoShift{1}{3}{+}{7}\horizontalDominoShift{2}{3}{+}{7}\horizontalDominoShift{1}{5}{-}{7}
+          \horizontalDominoRSShift{2}{5}{-}{7}
+          \fixedSquaresForGridShift{2}{3}{7}\gridLinesShift{3}{2}{15}\verticalDominoShift{1}{2}{1}{15}\horizontalDominoShift{1}{3}{2}{15}\verticalDominoShift{3}{2}{3}{15}\verticalDominoShift{2}{3}{4}{15}\verticalDominoShift{5}{2}{6}{15}\fixedSquaresForGridShift{3}{2}{15}
+          \gridLinesShift{3}{2}{20}\verticalDominoShift{1}{2}{}{20}\horizontalDominoShift{1}{3}{}{20}\verticalDominoShift{3}{2}{}{20}\verticalDominoShift{2}{3}{}{20}\verticalDominoShift{5}{2}{}{20}
+          \verticalDominoRSShift{4}{3}{}{20}
+          \fixedSquaresForGridShiftAlt{3}{2}{20}\end{tikzpicture}
+        \end{figure}
+        goes to
+        \begin{figure}[H]
+          % 1- 2- 3+ 4+ 6- 5_7
+          \centering
+          \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{3}\verticalDomino{1}{2}{1}\verticalDomino{3}{2}{2}\horizontalDomino{1}{3}{3}\horizontalDomino{2}{3}{4}\horizontalDomino{1}{5}{5}\horizontalDomino{2}{5}{6}\horizontalDomino{3}{3}{7}\fixedSquaresForGrid{2}{3}\gridLinesShift{2}{3}{7}\verticalDominoShift{3}{2}{-}{7}\verticalDominoShift{1}{4}{+}{7}\horizontalDominoShift{1}{5}{-}{7}\horizontalDominoShift{2}{5}{-}{7}\horizontalDominoShift{3}{3}{+}{7}\emptyBoxShift{1}{2}{7}\fixedSquaresForGridShift{2}{3}{7}\gridLinesShift{3}{2}{15}\verticalDominoShift{1}{2}{1}{15}\horizontalDominoShift{1}{3}{2}{15}\verticalDominoShift{3}{2}{3}{15}\verticalDominoShift{2}{3}{4}{15}\verticalDominoShift{5}{2}{5}{15}\verticalDominoShift{4}{3}{6}{15}\verticalDominoShift{2}{4}{7}{15}\fixedSquaresForGridShift{3}{2}{15}\gridLinesShift{3}{2}{20}\verticalDominoShift{1}{4}{}{20}\verticalDominoShift{3}{2}{}{20}\verticalDominoShift{5}{2}{}{20}\verticalDominoShift{4}{3}{}{20}\horizontalDominoShift{3}{3}{}{20}\emptyBoxShift{1}{2}{20}\fixedSquaresForGridShiftAlt{3}{2}{20}\end{tikzpicture}
+        \end{figure}
+        \item Here the paired dominoes in the cycle are blank and the top domino has a sign (which must be $-$).
+        We put a $-$ sign in the new domino and then blank its sign and the sign of the pair domino.
+        \begin{figure}[H]
+          % 1t 2s 3+ 4+ 6-
+          \centering
+          \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{3}\verticalDomino{1}{2}{1}\verticalDomino{3}{2}{2}\horizontalDomino{1}{3}{3}\horizontalDomino{2}{3}{4}\horizontalDomino{1}{5}{6}\fixedSquaresForGrid{2}{3}\gridLinesShift{2}{3}{7}\verticalDominoShift{1}{2}{}{7}\verticalDominoShift{3}{2}{+}{7}\horizontalDominoShift{1}{3}{+}{7}\horizontalDominoShift{2}{3}{}{7}\horizontalDominoShift{1}{5}{-}{7}
+          \horizontalDominoRSShift{2}{5}{-}{7}
+          \fixedSquaresForGridShift{2}{3}{7}\gridLinesShift{3}{2}{15}\verticalDominoShift{1}{2}{1}{15}\horizontalDominoShift{1}{3}{2}{15}\verticalDominoShift{3}{2}{3}{15}\verticalDominoShift{2}{3}{4}{15}\verticalDominoShift{5}{2}{6}{15}\fixedSquaresForGridShift{3}{2}{15}\gridLinesShift{3}{2}{20}\verticalDominoShift{1}{2}{s}{20}\horizontalDominoShift{1}{3}{}{20}\verticalDominoShift{3}{2}{}{20}\verticalDominoShift{2}{3}{t}{20}\verticalDominoShift{5}{2}{}{20}
+          \verticalDominoRSShift{4}{3}{}{20}
+          \fixedSquaresForGridShiftAlt{3}{2}{20}\end{tikzpicture}
+        \end{figure}
+        goes to
+        \begin{figure}[H]
+          % 1t 2s 3+ 4+ 6- 5_7
+          \centering
+          \begin{tikzpicture}[tableau, scale=.56]\gridLines{3}{3}\verticalDomino{1}{2}{1}\verticalDomino{3}{2}{2}\horizontalDomino{1}{3}{3}\horizontalDomino{2}{3}{4}\horizontalDomino{1}{5}{5}\horizontalDomino{2}{5}{6}\verticalDomino{5}{2}{7}\fixedSquaresForGrid{3}{3}\gridLinesShift{3}{3}{7}\verticalDominoShift{1}{2}{}{7}\verticalDominoShift{3}{2}{+}{7}\horizontalDominoShift{1}{3}{}{7}\horizontalDominoShift{2}{3}{}{7}\horizontalDominoShift{1}{5}{-}{7}\horizontalDominoShift{2}{5}{}{7}\verticalDominoShift{5}{2}{+}{7}\fixedSquaresForGridShift{3}{3}{7}\gridLinesShift{3}{3}{15}\verticalDominoShift{1}{2}{1}{15}\horizontalDominoShift{1}{3}{2}{15}\verticalDominoShift{3}{2}{3}{15}\verticalDominoShift{2}{3}{4}{15}\verticalDominoShift{5}{2}{5}{15}\verticalDominoShift{4}{3}{6}{15}\horizontalDominoShift{1}{5}{7}{15}\fixedSquaresForGridShift{3}{3}{15}\gridLinesShift{3}{3}{22}\verticalDominoShift{1}{2}{s}{22}\horizontalDominoShift{1}{3}{}{22}\verticalDominoShift{3}{2}{s}{22}\verticalDominoShift{2}{3}{t}{22}\verticalDominoShift{5}{2}{}{22}\verticalDominoShift{4}{3}{t}{22}\horizontalDominoShift{1}{5}{}{22}\fixedSquaresForGridShiftAlt{3}{3}{22}\end{tikzpicture}
+        \end{figure}
+
+        \item Here the paired dominoes in the cycle have signs and the top domino is blank (with $s$ in the corresponding domino).
+        As before, we give the new domino a $-$ sign.
+        After, we need to make the signs in the cycle compatible with the new cycle top.
+        That is, we call \texttt{putSignInCycleBottom()} on the $s$ domino.
+        \begin{figure}[H]
+          % 1- 2- 3+ 4+ 5+ 6s 7s 10- 9_11
+          \centering
+          \begin{tikzpicture}[tableau, scale=.56]\gridLines{3}{3}\verticalDomino{1}{2}{1}\verticalDomino{3}{2}{2}\horizontalDomino{1}{3}{3}\horizontalDomino{2}{3}{4}\horizontalDomino{3}{3}{5}\verticalDomino{5}{2}{6}\horizontalDomino{4}{3}{7}\horizontalDomino{1}{5}{9}\horizontalDomino{2}{5}{10}\horizontalDomino{3}{5}{11}\fixedSquaresForGrid{3}{3}\gridLinesShift{3}{3}{7}\verticalDominoShift{3}{2}{-}{7}\horizontalDominoShift{3}{3}{+}{7}\emptyBoxShift{1}{2}{7}\verticalDominoShift{5}{2}{}{7}\horizontalDominoShift{4}{3}{+}{7}\verticalDominoShift{1}{6}{-}{7}\horizontalDominoShift{3}{5}{}{7}\emptyBoxShift{1}{4}{7}
+          \horizontalDominoRSShift{4}{5}{-}{7}
+          \fixedSquaresForGridShift{3}{3}{7}
+          \gridLinesShift{3}{3}{15}\verticalDominoShift{1}{2}{1}{15}\horizontalDominoShift{1}{3}{2}{15}\verticalDominoShift{3}{2}{3}{15}\verticalDominoShift{2}{3}{4}{15}\verticalDominoShift{2}{4}{5}{15}\horizontalDominoShift{1}{5}{6}{15}\verticalDominoShift{2}{5}{7}{15}\verticalDominoShift{5}{2}{9}{15}\verticalDominoShift{4}{3}{10}{15}\verticalDominoShift{4}{4}{11}{15}
+          \fixedSquaresForGridShift{3}{3}{15}\gridLinesShift{3}{3}{22}\verticalDominoShift{1}{4}{}{22}\verticalDominoShift{3}{4}{}{22}\emptyBoxShift{1}{2}{22}\horizontalDominoShift{1}{5}{s}{22}\verticalDominoShift{2}{5}{}{22}\verticalDominoShift{5}{2}{}{22}\horizontalDominoShift{5}{3}{s}{22}
+          \verticalDominoRSShift{4}{5}{}{22}
+          \emptyBoxShift{3}{2}{22}\fixedSquaresForGridShiftAlt{3}{3}{22}\end{tikzpicture}
+        \end{figure}
+        goes to
+        \begin{figure}[H]
+          % 1- 2- 3+ 4+ 5+ 6s 7s 10- 9_11 8_12
+          \centering
+          \begin{tikzpicture}[tableau, scale=.56]\gridLines{3}{3}\verticalDomino{1}{2}{1}\verticalDomino{3}{2}{2}\horizontalDomino{1}{3}{3}\horizontalDomino{2}{3}{4}\horizontalDomino{3}{3}{5}\verticalDomino{5}{2}{6}\horizontalDomino{4}{3}{7}\horizontalDomino{1}{5}{8}\horizontalDomino{2}{5}{9}\horizontalDomino{3}{5}{10}\horizontalDomino{4}{5}{11}\horizontalDomino{5}{3}{12}\fixedSquaresForGrid{3}{3}\gridLinesShift{3}{3}{7}\verticalDominoShift{3}{4}{}{7}\emptyBoxShift{1}{2}{7}\verticalDominoShift{5}{2}{}{7}\verticalDominoShift{1}{6}{-}{7}\horizontalDominoShift{3}{5}{}{7}\emptyBoxShift{1}{4}{7}\horizontalDominoShift{4}{5}{}{7}\horizontalDominoShift{5}{3}{+}{7}\emptyBoxShift{3}{2}{7}\fixedSquaresForGridShift{3}{3}{7}\gridLinesShift{3}{3}{15}\verticalDominoShift{1}{2}{1}{15}\horizontalDominoShift{1}{3}{2}{15}\verticalDominoShift{3}{2}{3}{15}\verticalDominoShift{2}{3}{4}{15}\verticalDominoShift{2}{4}{5}{15}\horizontalDominoShift{1}{5}{6}{15}\verticalDominoShift{2}{5}{7}{15}\verticalDominoShift{5}{2}{8}{15}\verticalDominoShift{4}{3}{9}{15}\verticalDominoShift{4}{4}{10}{15}\verticalDominoShift{4}{5}{11}{15}\verticalDominoShift{2}{6}{12}{15}\fixedSquaresForGridShift{3}{3}{15}\gridLinesShift{3}{3}{22}\verticalDominoShift{3}{4}{s}{22}\emptyBoxShift{1}{2}{22}\verticalDominoShift{1}{6}{s}{22}\verticalDominoShift{5}{2}{}{22}\horizontalDominoShift{5}{3}{s}{22}\emptyBoxShift{3}{2}{22}\verticalDominoShift{4}{5}{t}{22}\horizontalDominoShift{3}{5}{}{22}\emptyBoxShift{1}{4}{22}\fixedSquaresForGridShiftAlt{3}{3}{22}\end{tikzpicture}
+        \end{figure}
+        In the above example, there is a shape change, which is then reversed when the $+$ domino is added below.
+
+        \item Here the paired dominoes in the cycle are blank and the top domino is blank (with $s$ in the corresponding domino).
+        As before, we give the new domino a $-$ sign, and then blank the new domino and its pair.
+        After, we need to make the signs in the cycle compatible with the new cycle top.
+        That is, we call \texttt{putSignInCycleBottom()} on the $s$ domino.
+        \begin{figure}[H]
+          % 1- 2+ 3+ 4s 6+ 5_-7 10- 9_11
+          \centering
+          \begin{tikzpicture}[tableau, scale=.56]\gridLines{3}{3}\verticalDomino{1}{2}{1}\horizontalDomino{1}{3}{2}\horizontalDomino{2}{3}{3}\verticalDomino{3}{2}{4}\verticalDomino{5}{2}{5}\horizontalDomino{3}{3}{6}\horizontalDomino{4}{3}{7}\horizontalDomino{1}{5}{9}\horizontalDomino{2}{5}{10}\horizontalDomino{3}{5}{11}\fixedSquaresForGrid{3}{3}\gridLinesShift{3}{3}{7}\emptyBoxShift{1}{2}{7}\verticalDominoShift{3}{2}{}{7}\horizontalDominoShift{3}{3}{+}{7}\verticalDominoShift{5}{2}{+}{7}\horizontalDominoShift{4}{3}{}{7}\verticalDominoShift{1}{6}{-}{7}\horizontalDominoShift{3}{5}{}{7}\emptyBoxShift{1}{4}{7}
+          \horizontalDominoRSShift{4}{5}{-}{7}
+          \fixedSquaresForGridShift{3}{3}{7}
+          \gridLinesShift{3}{3}{15}\verticalDominoShift{1}{2}{1}{15}\verticalDominoShift{3}{2}{2}{15}\verticalDominoShift{1}{3}{3}{15}\verticalDominoShift{1}{4}{4}{15}\horizontalDominoShift{1}{5}{5}{15}\horizontalDominoShift{3}{3}{6}{15}\verticalDominoShift{2}{5}{7}{15}\verticalDominoShift{5}{2}{9}{15}\verticalDominoShift{4}{3}{10}{15}\verticalDominoShift{4}{4}{11}{15}\fixedSquaresForGridShift{3}{3}{15}\gridLinesShift{3}{3}{22}\emptyBoxShift{1}{2}{22}\verticalDominoShift{1}{4}{t}{22}\verticalDominoShift{3}{4}{}{22}\horizontalDominoShift{1}{5}{}{22}\verticalDominoShift{2}{5}{s}{22}\verticalDominoShift{5}{2}{}{22}\horizontalDominoShift{5}{3}{s}{22}\emptyBoxShift{3}{2}{22}
+          \verticalDominoRSShift{4}{5}{}{22}
+          \fixedSquaresForGridShiftAlt{3}{3}{22}\end{tikzpicture}
+        \end{figure}
+        goes to
+        \begin{figure}[H]
+          % 1- 2+ 3+ 4s 6+ 5_-7 10- 9_11
+          \centering
+          \begin{tikzpicture}[tableau, scale=.56]\gridLines{3}{3}\verticalDomino{1}{2}{1}\horizontalDomino{1}{3}{2}\horizontalDomino{2}{3}{3}\verticalDomino{3}{2}{4}\verticalDomino{5}{2}{5}\horizontalDomino{3}{3}{6}\horizontalDomino{4}{3}{7}\horizontalDomino{1}{5}{9}\horizontalDomino{2}{5}{10}\horizontalDomino{3}{5}{11}\fixedSquaresForGrid{3}{3}\gridLinesShift{3}{3}{7}\emptyBoxShift{1}{2}{7}\verticalDominoShift{3}{2}{}{7}\horizontalDominoShift{3}{3}{}{7}\verticalDominoShift{5}{2}{+}{7}\horizontalDominoShift{4}{3}{}{7}\verticalDominoShift{1}{6}{-}{7}\horizontalDominoShift{3}{5}{}{7}\emptyBoxShift{1}{4}{7}
+          \horizontalDominoRSShift{4}{5}{}{7}
+          \fixedSquaresForGridShift{3}{3}{7}
+          \gridLinesShift{3}{3}{15}\verticalDominoShift{1}{2}{1}{15}\verticalDominoShift{3}{2}{2}{15}\verticalDominoShift{1}{3}{3}{15}\verticalDominoShift{1}{4}{4}{15}\horizontalDominoShift{1}{5}{5}{15}\horizontalDominoShift{3}{3}{6}{15}\verticalDominoShift{2}{5}{7}{15}\verticalDominoShift{5}{2}{9}{15}\verticalDominoShift{4}{3}{10}{15}\verticalDominoShift{4}{4}{11}{15}\fixedSquaresForGridShift{3}{3}{15}
+          \gridLinesShift{3}{3}{22}
+          \emptyBoxShift{1}{2}{22}
+          \verticalDominoShift{1}{4}{t}{22}
+          \verticalDominoShift{3}{4}{t}{22}\horizontalDominoShift{1}{5}{}{22}
+          \verticalDominoShift{2}{5}{s}{22}
+          \verticalDominoShift{5}{2}{}{22}
+          \horizontalDominoShift{5}{3}{s}{22}
+          \emptyBoxShift{3}{2}{22}
+          \verticalDominoRSShift{4}{5}{s}{22}
+          \fixedSquaresForGridShiftAlt{3}{3}{22}\end{tikzpicture}
+        \end{figure}
+        goes to
+        \begin{figure}[H]
+          % 1- 2+ 3+ 4s 6+ 5_-7 10- 9_11 8_12
+          \centering
+          \begin{tikzpicture}[tableau, scale=.5]\gridLines{4}{3}\verticalDomino{1}{2}{1}\horizontalDomino{1}{3}{2}\horizontalDomino{2}{3}{3}\verticalDomino{3}{2}{4}\verticalDomino{5}{2}{5}\horizontalDomino{3}{3}{6}\verticalDomino{4}{3}{7}\horizontalDomino{1}{5}{8}\horizontalDomino{2}{5}{9}\horizontalDomino{3}{5}{10}\horizontalDomino{4}{4}{11}\verticalDomino{7}{2}{12}\fixedSquaresForGrid{4}{3}\gridLinesShift{4}{3}{7}\emptyBoxShift{1}{2}{7}\verticalDominoShift{3}{2}{+}{7}\horizontalDominoShift{3}{3}{-}{7}\verticalDominoShift{5}{2}{+}{7}\verticalDominoShift{4}{3}{-}{7}\verticalDominoShift{1}{6}{-}{7}\horizontalDominoShift{3}{5}{}{7}\emptyBoxShift{1}{4}{7}\horizontalDominoShift{4}{4}{+}{7}\verticalDominoShift{7}{2}{+}{7}\fixedSquaresForGridShift{4}{3}{7}\gridLinesShift{3}{4}{15}\verticalDominoShift{1}{2}{1}{15}\verticalDominoShift{3}{2}{2}{15}\verticalDominoShift{1}{3}{3}{15}\verticalDominoShift{1}{4}{4}{15}\horizontalDominoShift{1}{5}{5}{15}\horizontalDominoShift{3}{3}{6}{15}\horizontalDominoShift{2}{5}{7}{15}\verticalDominoShift{5}{2}{8}{15}\verticalDominoShift{4}{3}{9}{15}\verticalDominoShift{4}{4}{10}{15}\verticalDominoShift{3}{5}{11}{15}\horizontalDominoShift{1}{7}{12}{15}\fixedSquaresForGridShift{3}{4}{15}\gridLinesShift{3}{4}{24}\emptyBoxShift{1}{2}{24}\verticalDominoShift{1}{4}{}{24}\verticalDominoShift{3}{4}{}{24}\horizontalDominoShift{1}{5}{}{24}\horizontalDominoShift{2}{5}{}{24}\verticalDominoShift{5}{2}{}{24}\horizontalDominoShift{5}{3}{s}{24}\emptyBoxShift{3}{2}{24}\verticalDominoShift{3}{5}{}{24}\horizontalDominoShift{1}{7}{}{24}\fixedSquaresForGridShiftAlt{3}{4}{24}\end{tikzpicture}
+        \end{figure}
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{document}

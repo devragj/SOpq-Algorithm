@@ -1,0 +1,296 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{euscript}
+\usepackage{mathrsfs}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{boldline}
+\usepackage{indentfirst}
+\usepackage{environ}
+\usetikzlibrary{positioning}
+
+\makeatletter
+\newsavebox{\measure@tikzpicture}
+\NewEnviron{scaletikzpicturetowidth}[1]{%
+  \def\tikz@width{#1}%
+  \def\tikzscale{1}\begin{lrbox}{\measure@tikzpicture}%
+  \BODY
+  \end{lrbox}%
+  \pgfmathparse{#1/\wd\measure@tikzpicture}%
+  \edef\tikzscale{\pgfmathresult}%
+  \BODY
+}
+\makeatother
+
+\numberwithin{equation}{section}
+
+\hypersetup{
+    colorlinks=true,
+    % linkcolor=blue,
+    linkcolor=[RGB]{0,0,128},
+    % filecolor=[RGB]{0,0,128},
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor = [RGB]{128,0,128}
+}
+
+\newcommand{\myref}[2]{\hyperref[#2]{#1 \ref*{#2}}}
+\newcommand{\myrefT}[1]{\hyperref[#1]{Theorem \ref*{#1}}}
+\newcommand{\myrefP}[1]{\hyperref[#1]{Proposition \ref*{#1}}}
+\newcommand{\myrefL}[1]{\hyperref[#1]{Lemma \ref*{#1}}}
+\newcommand{\myrefD}[1]{\hyperref[#1]{Definition \ref*{#1}}}
+\newcommand{\myrefn}[3]{\hyperref[#2]{#1 \ref*{#2} (#3)}}
+
+% \input{dynkinMacros.tex}
+% \input{dynkinEMacros.tex}
+\input{commands8.tex}
+\input{tableauMacros.tex}
+\newcommand{\euscr}{\EuScript}
+
+\newcommand{\upLineLabel}[4]{\draw[-, thick, #1] (#2.north) -- node[right]{$#4$} (#3.south);}
+\newcommand{\sideLine}[3]{\draw[-, thick, dashdotted, #1] (#2.east) -- (#3.west);}
+
+\newcommand{\bdot}{\begin{tikzpicture}[close]
+  \filldraw (0, 0) circle (3pt);
+\end{tikzpicture}
+}
+\newcommand{\upLineLabelPos}[5]{\draw[-, thick, #1] (#2.north) -- node[#5]{$#4$} (#3.south);}
+\newcommand{\sideLineStyle}[4]{\draw[-, thick, #1, #2] (#3.east) -- (#4.west);}
+
+\newcommand{\lstar}[1]{\prescript{*}{}#1}
+\newcommand{\rstar}[1]{#1^*}
+\newcommand{\lstarB}[1]{\prescript{*}{B}#1}
+\newcommand{\rstarB}[1]{\prescript{}{B}#1^*}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+
+\newcommand{\upperLabel}[1]{\node[draw, brown, text = black, inner sep = .3cm] at (current bounding box.north) {\Large{#1}};}
+
+\newcommand{\frot}{\frac{1}{2}}
+\newcommand{\dsim}{\underset{d}{\sim}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{notation}[theorem]{Notation}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem{remarkNumbered}[theorem]{Remark}
+\newtheorem*{example}{Example}
+
+\newcommand{\mutilde}{\tilde \mu}
+\newcommand{\refSet}{\{1,2,4\}}
+\newcommand{\bigRefSet}{\{s_1, s_2, s_4\}}
+\newcommand{\DFourSet}{\{s_1, s_2, s_3, s_4\}}
+\newcommand{\SDFour}{{J_0}}
+\newcommand{\WDFour}{W_0}
+\newcommand{\tDFour}{\tau_0}
+% \newcommand{\barJ}{{\bar J}}
+\newcommand{\wjsub}[1]{W_{J_{#1}}}
+
+\newcommand{\scA}{\EuScript A}
+\newcommand{\scB}{\EuScript B}
+\newcommand{\scC}{\EuScript C}
+\newcommand{\scD}{\EuScript D}
+
+\newcommand{\equivR}{\underset{R}{\sim}}
+\newcommand{\equivL}{\underset{L}{\sim}}
+\newcommand{\leqL}{\underset{L}{\leq}}
+\newcommand{\leqR}{\underset{R}{\leq}}
+\newcommand{\equivT}{\underset{\euscr T}{\sim}}
+\newcommand{\equivGTT}{\underset{GT\euscr T}{\sim}}
+\newcommand{\equivGTTPrime}{\underset{GT\euscr T'}{\sim}}
+
+\newcommand{\equivD}[1]{\underset{#1}{\overset{D}{\approx}}}
+
+\newcommand{\tauL}{\tau_L}
+\newcommand{\tauR}{\tau_R}
+\newcommand{\Dst}{D_{s,t}(W)}
+\newcommand{\DstL}{D^L_{s,t}(W)}
+\newcommand{\DstR}{D^R_{s,t}(W)}
+\newcommand{\Tst}{T_{s,t}}
+\newcommand{\TstL}{T^L_{s,t}}
+\newcommand{\TstR}{T^R_{s,t}}
+
+\begin{document}
+  The next property of the sign tableaux is that dominoes in a type II cycle are paired with dominoes in the type I cycle which they are immediately nested in.
+  Specifically, each domino in a type II cycle with fixed square $\sij$ is paired with the domino with fixed square $\ss{i-1}{j-1}$.
+  Paired dominoes either both have no sign or else they have opposite signs.
+  In the following example, I'm showing the two sign tableaux out of the four tableaux.
+  Blue diagonal lines indicate the pairing of fixed squares.
+
+  \begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[tableau, scale = .7]
+      \gridLines{3}{3}
+      \verticalDomino{1}{2}{+}
+      \verticalDomino{3}{2}{+}
+      \horizontalDomino{1}{3}{-}
+      \horizontalDomino{2}{3}{-}
+      \horizontalDomino{1}{5}{+}
+      \verticalDomino{3}{3}{-}
+      \verticalDomino{5}{2}{}
+      \fixedSquaresForGrid{3}{3}
+
+      \draw[thick, blue] (1.5, .5) -- +(1, 1);
+      \draw[thick, blue] (1.5, 2.5) -- +(1, 1);
+
+      \gridLinesShift{3}{3}{7}
+      \verticalDominoShift{1}{2}{}{7}
+      \verticalDominoShift{3}{2}{}{7}
+      \horizontalDominoShift{1}{3}{}{7}
+      \verticalDominoShift{2}{3}{}{7}
+      \horizontalDominoShift{1}{5}{t}{7}
+      \horizontalDominoShift{2}{4}{}{7}
+      \verticalDominoShift{5}{2}{}{7}
+      \fixedSquaresForGridShift{3}{3}{7}
+
+      \draw[thick, blue] (1.5 + 7, .5) -- +(1, 1);
+      \draw[thick, blue] (3.5 + 7, .5) -- +(1, 1);
+    \end{tikzpicture}
+  \end{figure}
+
+
+  One way to think about the paired dominoes is in analogy with the $Sp(p,q)$ algorithm.
+  In the $Sp(p,q)$ algorithm, the signs at the end of even rows were important for the algorithm, and had to do with cycles, but they had no information about the nilpotent orbit.
+  After the algorithm was done, they were forgotten.
+  In the same way, in the $SO(p,q)$ algorithm, paired dominoes have no information about the union of nilpotent orbits which is the associated variety.
+  After the algorithm is done, the paired dominoes are boxed up and forgotten.
+  In particular, though associated varieties are constant on cells, the sign tableaux of the algorithm are not.
+  For example, a parameter which produces the two signed tableaux shown above is in the same cell as parameters which produce the folllowing pair of signed tableaux, which are more easily seen as representing unions of nilpotent orbits:
+  \begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[tableau, scale = .7]
+      \gridLines{3}{3}
+      \emptyBox{1}{2}
+      \emptyBox{3}{2}
+      \verticalDomino{1}{4}{-}
+      \horizontalDomino{1}{5}{+}
+      \verticalDomino{5}{2}{}
+      \fixedSquaresForGrid{3}{3}
+
+      \gridLinesShift{3}{3}{7}
+      \emptyBoxShift{1}{2}{7}
+      \emptyBoxShift{1}{4}{7}
+      \verticalDominoShift{3}{2}{}{7}
+      \verticalDominoShift{1}{6}{t}{7}
+      \verticalDominoShift{5}{2}{}{7}
+      \fixedSquaresForGridShift{3}{3}{7}
+    \end{tikzpicture}
+  \end{figure}
+
+  Before describing more rules for the sign tableaux, I'll explain how they correspond to unions of nilpotent orbits.
+  This will put the next rules in a context.
+  To be specific, I'll talk about the left sign tableau, where the signs are $+$ and $-$.
+  From the point of view of a nilpotent orbit, a domino with a $+$ sign is holding two $+$ signs.
+  A blank domino is holding one $+$ sign and one $-$ sign.
+  A 2x2 box is holding two $+$ signs and two $-$ signs.
+
+  For example, from the discrete series parameter $1{+}\ 2-$, we get the following four tableaux:
+  \begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[tableau, scale = .7]
+      \gridLines{1}{2}
+      \verticalDomino{1}{2}{1}
+      \horizontalDomino{1}{3}{2}
+      \fixedSquaresForGrid{1}{2}
+
+      \gridLinesShift{1}{2}{5}
+      \verticalDominoShift{1}{2}{-}{5}
+      \horizontalDominoShift{1}{3}{+}{5}
+      \fixedSquaresForGridShift{1}{2}{5}
+
+      \gridLinesShift{2}{1}{11}
+      \verticalDominoShift{1}{2}{1}{11}
+      \verticalDominoShift{3}{2}{2}{11}
+      \fixedSquaresForGridShift{2}{1}{11}
+
+      \gridLinesShift{2}{1}{14}
+      \verticalDominoShift{1}{2}{}{14}
+      \verticalDominoShift{3}{2}{}{14}
+      \fixedSquaresForGridShiftAlt{2}{1}{14}
+    \end{tikzpicture}
+  \end{figure}
+
+  The first sign tableau has two $+$ signs and one $-$ sign in its first row, and one $-$ sign in its second row.
+  So, it denotes the nilpotent orbit
+  \begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[tableau, scale = .7]
+      \gridLines{1}{2}
+      \filledSquare{1}{2}{+}
+      \filledSquare{1}{3}{-}
+      \filledSquare{1}{4}{+}
+      \filledSquare{2}{2}{-}
+      \fixedSquaresForGrid{1}{2}
+    \end{tikzpicture}
+  \end{figure}
+
+  On the other hand, if we start with the parameter $1s\ 2s$, which is discrete series for the dual group, we get
+  \begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[tableau, scale = .7]
+      \gridLines{1}{2}
+      \verticalDomino{1}{2}{1}
+      \horizontalDomino{1}{3}{2}
+      \fixedSquaresForGrid{1}{2}
+
+      \gridLinesShift{1}{2}{5}
+      \verticalDominoShift{1}{2}{}{5}
+      \horizontalDominoShift{1}{3}{}{5}
+      \fixedSquaresForGridShift{1}{2}{5}
+
+      \gridLinesShift{2}{1}{11}
+      \verticalDominoShift{1}{2}{1}{11}
+      \verticalDominoShift{3}{2}{2}{11}
+      \fixedSquaresForGridShift{2}{1}{11}
+
+      \gridLinesShift{2}{1}{14}
+      \verticalDominoShift{1}{2}{s}{14}
+      \verticalDominoShift{3}{2}{s}{14}
+      \fixedSquaresForGridShiftAlt{2}{1}{14}
+    \end{tikzpicture}
+  \end{figure}
+  Now, the first sign tableau, with its blank dominoes, signifies the union of the two nilpotent orbits shown below.
+  \begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[tableau, scale = .7]
+      \gridLines{1}{2}
+      \filledSquare{1}{2}{+}
+      \filledSquare{1}{3}{-}
+      \filledSquare{1}{4}{+}
+      \filledSquare{2}{2}{-}
+      \fixedSquaresForGrid{1}{2}
+
+      \gridLinesShift{1}{2}{6}
+      \filledSquareShift{1}{2}{-}{6}
+      \filledSquareShift{1}{3}{+}{6}
+      \filledSquareShift{1}{4}{-}{6}
+      \filledSquareShift{2}{2}{+}{6}
+      \fixedSquaresForGridShiftAlt{1}{2}{6}
+    \end{tikzpicture}
+  \end{figure}
+
+  This is because the blank vertical domino contains two signs, one $+$ sign and one $-$ sign, and it is not specified which one is in the first row and which is in the second row.
+
+  This introduces the next rule of sign tableaux.
+  Unlike in previous algorithms, here you don't have unpaired dominoes with different signs in the same column.
+  Instead, a column can have unpaired dominoes with one given sign and also blank dominoes.
+  Similarly, in a row, the unpaired dominoes alternate in sign, but they can be separated by one or more blank dominoes.
+
+  The equivalence relation is that you can interchange adjacent unpaired dominoes if one has a sign and one is blank, as long as you also interchange the corresponding dominoes in the other sign tableau, and as long as both tableaux then still obey all the rules of sign tableaux.
+  One difference from previous algorithms is that each equivalence class has a preferred representative, namely that in which signed dominoes are as far up and to the right as possible.
+  At the end of each stage of the algorithm, the tableaux need to end up in the preferred representative.
+  However, as you perform a step of the algorithm, you might need to interchange some dominoes.
+
+  There are complicated rules for what configurations are possible for the paired dominoes, and how they interact with adjacent unpaired dominoes when interchanges are made.
+\end{document}

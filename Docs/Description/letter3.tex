@@ -1,0 +1,149 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{euscript}
+\usepackage{mathrsfs}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{boldline}
+\usepackage{indentfirst}
+\usepackage{environ}
+\usetikzlibrary{positioning}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=[RGB]{0,0,128},
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor = [RGB]{128,0,128}
+}
+
+\newcommand{\myref}[2]{\hyperref[#2]{#1 \ref*{#2}}}
+\newcommand{\myrefT}[1]{\hyperref[#1]{Theorem \ref*{#1}}}
+\newcommand{\myrefP}[1]{\hyperref[#1]{Proposition \ref*{#1}}}
+\newcommand{\myrefL}[1]{\hyperref[#1]{Lemma \ref*{#1}}}
+\newcommand{\myrefD}[1]{\hyperref[#1]{Definition \ref*{#1}}}
+\newcommand{\myrefn}[3]{\hyperref[#2]{#1 \ref*{#2} (#3)}}
+
+% \input{dynkinMacros.tex}
+% \input{dynkinEMacros.tex}
+\input{commands8.tex}
+\input{tableauMacros.tex}
+\newcommand{\euscr}{\EuScript}
+
+\newcommand{\upLineLabel}[4]{\draw[-, thick, #1] (#2.north) -- node[right]{$#4$} (#3.south);}
+\newcommand{\sideLine}[3]{\draw[-, thick, dashdotted, #1] (#2.east) -- (#3.west);}
+
+\newcommand{\bdot}{\begin{tikzpicture}[close]
+  \filldraw (0, 0) circle (3pt);
+\end{tikzpicture}
+}
+\newcommand{\upLineLabelPos}[5]{\draw[-, thick, #1] (#2.north) -- node[#5]{$#4$} (#3.south);}
+\newcommand{\sideLineStyle}[4]{\draw[-, thick, #1, #2] (#3.east) -- (#4.west);}
+
+\newcommand{\lstar}[1]{\prescript{*}{}#1}
+\newcommand{\rstar}[1]{#1^*}
+\newcommand{\lstarB}[1]{\prescript{*}{B}#1}
+\newcommand{\rstarB}[1]{\prescript{}{B}#1^*}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+
+\newcommand{\upperLabel}[1]{\node[draw, brown, text = black, inner sep = .3cm] at (current bounding box.north) {\Large{#1}};}
+
+\newcommand{\frot}{\frac{1}{2}}
+\newcommand{\dsim}{\underset{d}{\sim}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{notation}[theorem]{Notation}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem{remarkNumbered}[theorem]{Remark}
+\newtheorem*{example}{Example}
+
+\newcommand{\mutilde}{\tilde \mu}
+\newcommand{\refSet}{\{1,2,4\}}
+\newcommand{\bigRefSet}{\{s_1, s_2, s_4\}}
+\newcommand{\DFourSet}{\{s_1, s_2, s_3, s_4\}}
+\newcommand{\SDFour}{{J_0}}
+\newcommand{\WDFour}{W_0}
+\newcommand{\tDFour}{\tau_0}
+% \newcommand{\barJ}{{\bar J}}
+\newcommand{\wjsub}[1]{W_{J_{#1}}}
+
+\newcommand{\scA}{\EuScript A}
+\newcommand{\scB}{\EuScript B}
+\newcommand{\scC}{\EuScript C}
+\newcommand{\scD}{\EuScript D}
+
+\newcommand{\equivR}{\underset{R}{\sim}}
+\newcommand{\equivL}{\underset{L}{\sim}}
+\newcommand{\leqL}{\underset{L}{\leq}}
+\newcommand{\leqR}{\underset{R}{\leq}}
+\newcommand{\equivT}{\underset{\euscr T}{\sim}}
+\newcommand{\equivGTT}{\underset{GT\euscr T}{\sim}}
+\newcommand{\equivGTTPrime}{\underset{GT\euscr T'}{\sim}}
+
+\newcommand{\equivD}[1]{\underset{#1}{\overset{D}{\approx}}}
+
+\newcommand{\tauL}{\tau_L}
+\newcommand{\tauR}{\tau_R}
+\newcommand{\Dst}{D_{s,t}(W)}
+\newcommand{\DstL}{D^L_{s,t}(W)}
+\newcommand{\DstR}{D^R_{s,t}(W)}
+\newcommand{\Tst}{T_{s,t}}
+\newcommand{\TstL}{T^L_{s,t}}
+\newcommand{\TstR}{T^R_{s,t}}
+
+\newcommand{\positivePair}[2]{\overline{#1\ #2}}
+\newcommand{\negativePair}[2]{\overline{#1\ {-#2}}}
+
+
+\tikzstyle{dominoStyle} = [color=black, fill=white, rounded corners = .1cm, thick]
+
+\begin{document}
+  The rule for unpaired dominoes that you cannot having different signs in the same column, and must have alternating sings in a row, is a rule which holds within each type I cycle.
+  The signs in different type I cycles are not related.
+  Here is an example, with the input parameter $1{+}\ 2{+}\ 3{-}\ 4{-}\ \negativePair{5}{6}\ 7{+}\ 8{+}\ 9{+}$.
+  The level 3 type I cycle has a $+$ sign, whereas the dominoes above it have $-$ signs.
+
+  \tikzstyle{dominoStyle} = [color=black, fill=white, rounded corners = .08cm, thick]
+
+  \begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[tableau, scale=.55]
+      \gridLines{3}{3}\verticalDomino{1}{2}{1}\verticalDomino{3}{2}{2}\horizontalDomino{1}{3}{3}\horizontalDomino{2}{3}{4}\verticalDomino{5}{2}{5}\verticalDomino{3}{3}{6}\horizontalDomino{1}{5}{7}\horizontalDomino{2}{5}{8}\verticalDomino{3}{4}{9}
+      % \fixedSquaresForGrid{3}{3}
+
+      \draw[cycleLine] (1.5, 5.5) -- ++ (0, -5) -- + (5, 0);
+      \draw[cycleLine] (5.5, 1.5) -- ++ (-3, 0) -- + (0, 3);
+      \draw[cycleLine] (3.5, 3.5) -- ++ (0, -1) -- + (1, 0);
+
+      \gridLinesShift{3}{3}{7}\verticalDominoShift{1}{2}{+}{7}\verticalDominoShift{3}{2}{+}{7}\horizontalDominoShift{1}{3}{-}{7}\horizontalDominoShift{2}{3}{-}{7}\verticalDominoShift{5}{2}{+}{7}\verticalDominoShift{3}{3}{-}{7}\horizontalDominoShift{1}{5}{+}{7}\horizontalDominoShift{2}{5}{+}{7}\verticalDominoShift{3}{4}{+}{7}
+      % \fixedSquaresForGridShift{3}{3}{7}
+
+      \draw[cycleLine] (1.5 + 7 -.04, 5.5 -.04) -- ++ (0, -5) -- + (5, 0);
+      \draw[cycleLine] (5.5 + 7 -.04, 1.5 -.04) -- ++ (-3, 0) -- + (0, 3);
+      \draw[cycleLine] (3.5 + 7 -.04, 3.5 -.04) -- ++ (0, -1) -- + (1, 0);
+
+      \gridLinesShift{3}{3}{15}\verticalDominoShift{1}{2}{1}{15}\horizontalDominoShift{1}{3}{2}{15}\verticalDominoShift{3}{2}{3}{15}\verticalDominoShift{2}{3}{4}{15}\horizontalDominoShift{1}{5}{5}{15}\horizontalDominoShift{2}{4}{6}{15}\verticalDominoShift{5}{2}{7}{15}\verticalDominoShift{4}{3}{8}{15}
+      \verticalDominoShift{3}{4}{9}{15}
+      % \fixedSquaresForGridShift{3}{3}{15}
+
+      \gridLinesShift{3}{3}{22}\verticalDominoShift{1}{2}{}{22}\horizontalDominoShift{1}{3}{}{22}\verticalDominoShift{3}{2}{}{22}\verticalDominoShift{2}{3}{}{22}\horizontalDominoShift{1}{5}{}{22}\horizontalDominoShift{2}{4}{}{22}\verticalDominoShift{5}{2}{}{22}\verticalDominoShift{4}{3}{}{22}\verticalDominoShift{3}{4}{}{22}
+      % \fixedSquaresForGridShift{3}{3}{22}
+    \end{tikzpicture}
+  \end{figure}
+
+  \tikzstyle{dominoStyle} = [color=black, fill=white, rounded corners = .1cm, thick]
+
+\end{document}

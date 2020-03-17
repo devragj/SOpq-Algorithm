@@ -1,0 +1,1 @@
+In case anything happens to me, these are my notes (work in progress) describing the algorithm.  Of course, if you have come here because you are interested in the algorithm, you are welcome to read my notes and email me (devra.johnson at verizon.net) with any questions.

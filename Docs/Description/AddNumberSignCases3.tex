@@ -1,0 +1,557 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{euscript}
+\usepackage{mathrsfs}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{boldline}
+\usepackage{indentfirst}
+\usepackage{environ}
+\usepackage{courier}
+\usetikzlibrary{positioning}
+
+\renewcommand{\labelitemii}{$\vartriangleright$}
+\renewcommand{\labelitemiv}{$\Join$}
+
+\makeatletter
+\newsavebox{\measure@tikzpicture}
+\NewEnviron{scaletikzpicturetowidth}[1]{%
+  \def\tikz@width{#1}%
+  \def\tikzscale{1}\begin{lrbox}{\measure@tikzpicture}%
+  \BODY
+  \end{lrbox}%
+  \pgfmathparse{#1/\wd\measure@tikzpicture}%
+  \edef\tikzscale{\pgfmathresult}%
+  \BODY
+}
+\makeatother
+
+\numberwithin{equation}{section}
+
+\hypersetup{
+    colorlinks=true,
+    % linkcolor=blue,
+    linkcolor=[RGB]{0,0,128},
+    % filecolor=[RGB]{0,0,128},
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor = [RGB]{128,0,128}
+}
+
+\newcommand{\myref}[2]{\hyperref[#2]{#1 \ref*{#2}}}
+\newcommand{\myrefT}[1]{\hyperref[#1]{Theorem \ref*{#1}}}
+\newcommand{\myrefP}[1]{\hyperref[#1]{Proposition \ref*{#1}}}
+\newcommand{\myrefL}[1]{\hyperref[#1]{Lemma \ref*{#1}}}
+\newcommand{\myrefD}[1]{\hyperref[#1]{Definition \ref*{#1}}}
+\newcommand{\myrefn}[3]{\hyperref[#2]{#1 \ref*{#2} (#3)}}
+
+% \input{dynkinMacros.tex}
+% \input{dynkinEMacros.tex}
+\input{commands8.tex}
+\input{tableauMacros.tex}
+\newcommand{\euscr}{\EuScript}
+
+\newcommand{\upLineLabel}[4]{\draw[-, thick, #1] (#2.north) -- node[right]{$#4$} (#3.south);}
+\newcommand{\sideLine}[3]{\draw[-, thick, dashdotted, #1] (#2.east) -- (#3.west);}
+
+\newcommand{\bdot}{\begin{tikzpicture}[close]
+  \filldraw (0, 0) circle (3pt);
+\end{tikzpicture}
+}
+\newcommand{\upLineLabelPos}[5]{\draw[-, thick, #1] (#2.north) -- node[#5]{$#4$} (#3.south);}
+\newcommand{\sideLineStyle}[4]{\draw[-, thick, #1, #2] (#3.east) -- (#4.west);}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+
+\newcommand{\upperLabel}[1]{\node[draw, brown, text = black, inner sep = .3cm] at (current bounding box.north) {\Large{#1}};}
+
+\tikzstyle{dominoMaybeStyle} = [color=blue, dashed, fill=white, rounded corners = .1cm, thick]
+
+\newcommand{\horizontalDominoMaybe}[3]{\filldraw [dominoMaybeStyle] (#2 - 1 + \eps, #1 - 1 + \eps) rectangle + (2 - \teps, 1 -\teps) node [dominoText] {$#3$};}
+\newcommand{\verticalDominoMaybe}[3]{\filldraw [dominoMaybeStyle] (#2 - 1 + \eps,  #1 - 1 + \eps) rectangle + (1 - \teps,2 -\teps) node [dominoText] {$#3$};}
+\newcommand{\horizontalDominoMaybeShift}[4]{\filldraw [dominoMaybeStyle] (#2 - 1 + #4 + \eps, #1 - 1 + \eps) rectangle + (2 - \teps, 1 -\teps) node [dominoText] {$#3$};}
+\newcommand{\verticalDominoMaybeShift}[4]{\filldraw [dominoMaybeStyle] (#2 - 1 + #4 + \eps,  #1 - 1 + \eps) rectangle + (1 - \teps,2 -\teps) node [dominoText] {$#3$};}
+
+\newcommand{\greenCircle}[2]{\filldraw[green] (#2 - .5, #1 - .5) circle (.2cm);}
+
+\setlist[itemize]{listparindent=1.25em, parsep=0pt}
+
+\begin{document}
+  Finally, our last situation is grid position $W$.
+  As before, we'll assume the sign which we are adding is $+$.
+  We're looking to add at position $(x, y)$.
+  To be looking to add at grid positon $W$, there must be an unboxed cycle directly to the left.
+  There must also be a sign in the row above (TODO, why?  We've asked this question before.)
+
+  Here is a quick overview.
+  If the leftmost sign in the row above is negative, we are good to go.
+  We can add here as a horizontal domino, extending the unboxed cycle.
+  If not, we need to look at the domino directly to the left, which we'll call the adjacent domino.
+  Our cases will depend on whether this domino is horizontal or vertical.
+
+  Now, we'll do the cases in the code.
+  We'll refer to the domino just above, in the $(x - 1, y)$ fixed square, as the pair domino.
+  Note, the pair domino is the cycle top.
+  \begin{itemize}
+    \item Here the adjacent domino is horizontal and the leftmost sign in the row above is $+$.
+    Then we can't add here.
+    We go to the next row.
+    \begin{figure}[H]
+      \centering
+      \begin{tikzpicture}[tableau, scale = .7]
+        \gridLines{2}{4}
+        \verticalDomino{1}{2}{}
+        \horizontalDomino{1}{3}{}
+        \horizontalDomino{1}{5}{}
+        \horizontalDomino{1}{7}{+}
+        \verticalDomino{2}{3}{}
+        \verticalDomino{3}{2}{}
+        \horizontalDomino{2}{4}{}
+        \horizontalDominoMaybe{2}{6}{+}
+        \greenCircle{3}{4}
+        \fixedSquaresForGrid{2}{4}
+      \end{tikzpicture}
+      \item
+    \end{figure}
+    \item Here the pair domino has a $-$ sign.
+    We can add here, as a horizontal domino.
+    This works whether or not the adjacent domino is horizontal.
+    Note, the row above has to have length at least $x + 3$, or we couldn't get here (TODO, prove this).
+    (We'll illustrate with the adjacent domino vertical since that makes for smaller examples.)
+    Since the pair domino has a $-$ sign and is the cycle top, the adjacent domino either has a $-$ sign or is blank.  Those are our two cases.
+    \begin{itemize}
+      \item If the adjacent domino has a $-$ sign, we don't have to do anything more.
+      The new domino will pair with it, and legitimately extend the signs in the pairing.
+      \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[tableau, scale = .7]
+          \gridLines{2}{3}
+          \verticalDomino{1}{2}{+}
+          \horizontalDomino{1}{3}{-}
+          \horizontalDomino{1}{5}{+}
+          \verticalDomino{2}{3}{-}
+          \horizontalDominoMaybe{2}{4}{+}
+          \verticalDomino{3}{2}{+}
+          \fixedSquaresForGrid{2}{3}
+
+          \gridLinesShift{3}{2}{9}
+          \verticalDominoShift{1}{2}{}{9}
+          \horizontalDominoShift{1}{3}{}{9}
+          \horizontalDominoShift{2}{3}{}{9}
+          \verticalDominoShift{3}{2}{ }{9}
+          \verticalDominoShift{5}{2}{ }{9}
+          \verticalDominoMaybeShift{3}{3}{ }{9}
+          \fixedSquaresForGridShift{3}{2}{9}
+        \end{tikzpicture}
+      \end{figure}
+      \begin{figure}[H]
+        % 1+ 2- 3_-4 5+ 6+
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{3}\verticalDomino{1}{2}{1}\horizontalDomino{1}{3}{2}\verticalDomino{3}{2}{3}\verticalDomino{2}{3}{4}\horizontalDomino{1}{5}{5}\horizontalDomino{2}{4}{6}\fixedSquaresForGrid{2}{3}\gridLinesShift{2}{3}{7}\verticalDominoShift{1}{2}{+}{7}\horizontalDominoShift{1}{3}{-}{7}\verticalDominoShift{3}{2}{+}{7}\verticalDominoShift{2}{3}{-}{7}\horizontalDominoShift{1}{5}{+}{7}\horizontalDominoShift{2}{4}{+}{7}\fixedSquaresForGridShift{2}{3}{7}\gridLinesShift{3}{2}{15}\verticalDominoShift{1}{2}{1}{15}\verticalDominoShift{3}{2}{2}{15}\horizontalDominoShift{1}{3}{3}{15}\horizontalDominoShift{2}{3}{4}{15}\verticalDominoShift{5}{2}{5}{15}\verticalDominoShift{3}{3}{6}{15}\fixedSquaresForGridShift{3}{2}{15}\gridLinesShift{3}{2}{20}\verticalDominoShift{1}{2}{}{20}\verticalDominoShift{3}{2}{}{20}\horizontalDominoShift{1}{3}{}{20}\horizontalDominoShift{2}{3}{}{20}\verticalDominoShift{5}{2}{}{20}\verticalDominoShift{3}{3}{}{20}\fixedSquaresForGridShiftAlt{3}{2}{20}\end{tikzpicture}
+      \end{figure}
+      \item If the adjacent domino is blank, we'll have to blank the added domino and the pair domino, and put signs in the corresponding dual dominoes.
+      (Note, I'm expecting that the domino to the right of the pair domino has a $+$, rather than being blank.  TODO, prove this.)
+      \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[tableau, scale = .7]
+          \gridLines{2}{3}
+          \verticalDomino{1}{2}{}
+          \horizontalDomino{1}{3}{-}
+          \horizontalDomino{1}{5}{+}
+          \verticalDomino{2}{3}{}
+          \horizontalDominoMaybe{2}{4}{+}
+          \verticalDomino{3}{2}{}
+          \fixedSquaresForGrid{2}{3}
+
+          \gridLinesShift{3}{2}{9}
+          \verticalDominoShift{1}{2}{s}{9}
+          \horizontalDominoShift{1}{3}{t}{9}
+          \horizontalDominoShift{2}{3}{t}{9}
+          \verticalDominoShift{3}{2}{}{9}
+          \verticalDominoShift{5}{2}{ }{9}
+          \verticalDominoMaybeShift{3}{3}{ }{9}
+          \fixedSquaresForGridShift{3}{2}{9}
+        \end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[tableau, scale = .7]
+          \gridLines{2}{3}
+          \verticalDomino{1}{2}{}
+          \horizontalDomino{1}{3}{}
+          \horizontalDomino{1}{5}{+}
+          \verticalDomino{2}{3}{}
+          \horizontalDominoMaybe{2}{4}{}
+          \verticalDomino{3}{2}{}
+          \fixedSquaresForGrid{2}{3}
+
+          \gridLinesShift{3}{2}{9}
+          \verticalDominoShift{1}{2}{s}{9}
+          \horizontalDominoShift{1}{3}{t}{9}
+          \horizontalDominoShift{2}{3}{t}{9}
+          \verticalDominoShift{3}{2}{s}{9}
+          \verticalDominoShift{5}{2}{ }{9}
+          \verticalDominoMaybeShift{3}{3}{t}{9}
+          \fixedSquaresForGridShift{3}{2}{9}
+        \end{tikzpicture}
+      \end{figure}
+      \begin{figure}[H]
+        % 1s 2- 3t 4t 5+ 6+
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{3}\verticalDomino{1}{2}{1}\horizontalDomino{1}{3}{2}\verticalDomino{3}{2}{3}\verticalDomino{2}{3}{4}\horizontalDomino{1}{5}{5}\horizontalDomino{2}{4}{6}\fixedSquaresForGrid{2}{3}\gridLinesShift{2}{3}{7}\verticalDominoShift{1}{2}{}{7}\horizontalDominoShift{1}{3}{}{7}\verticalDominoShift{3}{2}{}{7}\verticalDominoShift{2}{3}{}{7}\horizontalDominoShift{1}{5}{+}{7}\horizontalDominoShift{2}{4}{}{7}\fixedSquaresForGridShift{2}{3}{7}\gridLinesShift{3}{2}{15}\verticalDominoShift{1}{2}{1}{15}\verticalDominoShift{3}{2}{2}{15}\horizontalDominoShift{1}{3}{3}{15}\horizontalDominoShift{2}{3}{4}{15}\verticalDominoShift{5}{2}{5}{15}\verticalDominoShift{3}{3}{6}{15}\fixedSquaresForGridShift{3}{2}{15}\gridLinesShift{3}{2}{20}\verticalDominoShift{1}{2}{s}{20}\verticalDominoShift{3}{2}{s}{20}\horizontalDominoShift{1}{3}{t}{20}\horizontalDominoShift{2}{3}{t}{20}\verticalDominoShift{5}{2}{}{20}\verticalDominoShift{3}{3}{t}{20}\fixedSquaresForGridShiftAlt{3}{2}{20}\end{tikzpicture}
+      \end{figure}
+    \end{itemize}
+    \item Here the pair domino is blank and the sign in the above row is $-$
+    As in the previous case, we can add here, as a horizontal domino.
+    This works whether or not the adjacent domino is horizontal.
+    Note, the row above has to have length at least $x + 3$, since we have the blank pair domino plus at least one signed domino to the right.
+    (Again, we'll illustrate with the adjacent domino vertical since that makes for smaller examples.)
+
+    As in the code, we'll call the domino with the $-$ sign the right domino.
+    In all cases, we'll be blanking the right domino's sign (while bringing its sign to the pair domino), so we'll be putting a sign in the dual domino corresponding to the right domino.
+    We'll use \texttt{prepareForSign()} on the dual side for that.
+
+    Since the pair domino is blank, we have all three possibilities for the sign of the adjacent domino.
+    Those are our three cases.
+    Once we've moved the $-$ sign from the right domino to the pair domino, we have two opposite signs in the pair domino and newly-added domino.
+    We can do what we like with them.
+    So, we'll alter them to be compatible with the signs already in the paired cycles.
+    \begin{itemize}
+      \item Here the adjacent domino has a $-$ sign.
+      We don't have to do anything else.
+      \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[tableau, scale = .7]
+          \gridLines{2}{3}
+          \verticalDomino{1}{2}{+}
+          \horizontalDomino{1}{3}{}
+          \horizontalDomino{1}{5}{-}
+          \verticalDomino{2}{3}{-}
+          \horizontalDominoMaybe{2}{4}{+}
+          \verticalDomino{3}{2}{+}
+          \fixedSquaresForGrid{2}{3}
+
+          \gridLinesShift{3}{2}{9}
+          \verticalDominoShift{1}{2}{}{9}
+          \horizontalDominoShift{1}{3}{}{9}
+          \horizontalDominoShift{2}{3}{}{9}
+          \verticalDominoShift{3}{2}{s}{9}
+          \verticalDominoShift{5}{2}{ }{9}
+          \verticalDominoMaybeShift{3}{3}{ }{9}
+          \fixedSquaresForGridShift{3}{2}{9}
+        \end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[tableau, scale = .7]
+          \gridLines{2}{3}
+          \verticalDomino{1}{2}{+}
+          \horizontalDomino{1}{3}{-}
+          \horizontalDomino{1}{5}{}
+          \verticalDomino{2}{3}{-}
+          \horizontalDominoMaybe{2}{4}{+}
+          \verticalDomino{3}{2}{+}
+          \fixedSquaresForGrid{2}{3}
+
+          \gridLinesShift{3}{2}{9}
+          \verticalDominoShift{1}{2}{}{9}
+          \horizontalDominoShift{1}{3}{}{9}
+          \horizontalDominoShift{2}{3}{}{9}
+          \verticalDominoShift{3}{2}{}{9}
+          \verticalDominoShift{5}{2}{s}{9}
+          \verticalDominoMaybeShift{3}{3}{ }{9}
+          \fixedSquaresForGridShift{3}{2}{9}
+        \end{tikzpicture}
+      \end{figure}
+      \begin{figure}[H]
+        % 1s 2+ 3_-4 5_6
+        \centering
+        \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{3}\verticalDomino{1}{2}{1}\horizontalDomino{1}{3}{2}\verticalDomino{3}{2}{3}\verticalDomino{2}{3}{4}\horizontalDomino{1}{5}{5}\horizontalDomino{2}{4}{6}\fixedSquaresForGrid{2}{3}\gridLinesShift{2}{3}{7}\verticalDominoShift{1}{2}{+}{7}\horizontalDominoShift{1}{3}{-}{7}\verticalDominoShift{3}{2}{+}{7}\verticalDominoShift{2}{3}{-}{7}\horizontalDominoShift{1}{5}{}{7}\horizontalDominoShift{2}{4}{+}{7}\fixedSquaresForGridShift{2}{3}{7}\gridLinesShift{3}{2}{15}\verticalDominoShift{1}{2}{1}{15}\verticalDominoShift{3}{2}{2}{15}\horizontalDominoShift{1}{3}{3}{15}\horizontalDominoShift{2}{3}{4}{15}\verticalDominoShift{5}{2}{5}{15}\verticalDominoShift{3}{3}{6}{15}\fixedSquaresForGridShift{3}{2}{15}\gridLinesShift{3}{2}{20}\verticalDominoShift{1}{2}{}{20}\verticalDominoShift{3}{2}{}{20}\horizontalDominoShift{1}{3}{}{20}\horizontalDominoShift{2}{3}{}{20}\verticalDominoShift{5}{2}{s}{20}\verticalDominoShift{3}{3}{}{20}\fixedSquaresForGridShiftAlt{3}{2}{20}\end{tikzpicture}
+      \end{figure}
+      \item Here the adjacent domino has a $+$ sign.
+      After moving the $-$ sign to the pair domino, we need to swap the signs in the pair domino and the newly-added domino, to be compatible with sign pattern already on the cycle.
+      \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[tableau, scale = .7]
+          \gridLines{2}{3}
+          \verticalDomino{1}{2}{-}
+          \horizontalDomino{1}{3}{}
+          \horizontalDomino{1}{5}{-}
+          \verticalDomino{2}{3}{+}
+          \horizontalDominoMaybe{2}{4}{+}
+          \verticalDomino{3}{2}{-}
+          \fixedSquaresForGrid{2}{3}
+
+          \gridLinesShift{3}{2}{9}
+          \verticalDominoShift{1}{2}{}{9}
+          \horizontalDominoShift{1}{3}{}{9}
+          \horizontalDominoShift{2}{3}{}{9}
+          \verticalDominoShift{3}{2}{s}{9}
+          \verticalDominoShift{5}{2}{ }{9}
+          \verticalDominoMaybeShift{3}{3}{ }{9}
+          \fixedSquaresForGridShift{3}{2}{9}
+        \end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[tableau, scale = .7]
+          \gridLines{2}{3}
+          \verticalDomino{1}{2}{-}
+          \horizontalDomino{1}{3}{+}
+          \horizontalDomino{1}{5}{}
+          \verticalDomino{2}{3}{+}
+          \horizontalDominoMaybe{2}{4}{-}
+          \verticalDomino{3}{2}{-}
+          \fixedSquaresForGrid{2}{3}
+
+          \gridLinesShift{3}{2}{9}
+          \verticalDominoShift{1}{2}{}{9}
+          \horizontalDominoShift{1}{3}{}{9}
+          \horizontalDominoShift{2}{3}{}{9}
+          \verticalDominoShift{3}{2}{}{9}
+          \verticalDominoShift{5}{2}{s}{9}
+          \verticalDominoMaybeShift{3}{3}{ }{9}
+          \fixedSquaresForGridShift{3}{2}{9}
+        \end{tikzpicture}
+      \end{figure}
+      \begin{figure}[H]
+        % 1s 2- 3_-4 5- 6+ 7+
+        \centering
+        \begin{tikzpicture}[tableau, scale=.5]\gridLines{2}{4}\verticalDomino{1}{2}{1}\horizontalDomino{1}{3}{2}\verticalDomino{3}{2}{3}\verticalDomino{2}{3}{4}\horizontalDomino{1}{5}{5}\horizontalDomino{1}{7}{6}\horizontalDomino{2}{4}{7}\fixedSquaresForGrid{2}{4}\gridLinesShift{2}{4}{9}\verticalDominoShift{1}{2}{-}{9}\horizontalDominoShift{1}{3}{+}{9}\verticalDominoShift{3}{2}{-}{9}\verticalDominoShift{2}{3}{+}{9}\horizontalDominoShift{1}{5}{}{9}\horizontalDominoShift{1}{7}{+}{9}\horizontalDominoShift{2}{4}{-}{9}\fixedSquaresForGridShift{2}{4}{9}\gridLinesShift{4}{2}{19}\verticalDominoShift{1}{2}{1}{19}\verticalDominoShift{3}{2}{2}{19}\horizontalDominoShift{1}{3}{3}{19}\horizontalDominoShift{2}{3}{4}{19}\verticalDominoShift{5}{2}{5}{19}\verticalDominoShift{7}{2}{6}{19}\verticalDominoShift{3}{3}{7}{19}\fixedSquaresForGridShift{4}{2}{19}\gridLinesShift{4}{2}{24}\verticalDominoShift{1}{2}{}{24}\verticalDominoShift{3}{2}{}{24}\horizontalDominoShift{1}{3}{}{24}\horizontalDominoShift{2}{3}{}{24}\verticalDominoShift{5}{2}{s}{24}\verticalDominoShift{7}{2}{}{24}\verticalDominoShift{3}{3}{}{24}\fixedSquaresForGridShiftAlt{4}{2}{24}\end{tikzpicture}
+      \end{figure}
+      \item Here the adjacent domino is blank.
+      After moving the $-$ sign to the pair domino, we need to blank the pair domino and the newly-added domino, and to put appropriate signs into their corresponding dominoes, so as to be compatible with sign pattern already in the cycle.
+      \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[tableau, scale = .7]
+          \gridLines{2}{3}
+          \verticalDomino{1}{2}{}
+          \horizontalDomino{1}{3}{}
+          \horizontalDomino{1}{5}{-}
+          \verticalDomino{2}{3}{}
+          \horizontalDominoMaybe{2}{4}{+}
+          \verticalDomino{3}{2}{}
+          \fixedSquaresForGrid{2}{3}
+
+          \gridLinesShift{3}{2}{9}
+          \verticalDominoShift{1}{2}{s}{9}
+          \horizontalDominoShift{1}{3}{t}{9}
+          \horizontalDominoShift{2}{3}{t}{9}
+          \verticalDominoShift{3}{2}{s}{9}
+          \verticalDominoShift{5}{2}{ }{9}
+          \verticalDominoMaybeShift{3}{3}{ }{9}
+          \fixedSquaresForGridShift{3}{2}{9}
+        \end{tikzpicture}
+      \end{figure}
+      goes to
+      \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[tableau, scale = .7]
+          \gridLines{2}{3}
+          \verticalDomino{1}{2}{}
+          \horizontalDomino{1}{3}{}
+          \horizontalDomino{1}{5}{}
+          \verticalDomino{2}{3}{}
+          \horizontalDominoMaybe{2}{4}{}
+          \verticalDomino{3}{2}{}
+          \fixedSquaresForGrid{2}{3}
+
+          \gridLinesShift{3}{2}{9}
+          \verticalDominoShift{1}{2}{s}{9}
+          \horizontalDominoShift{1}{3}{t}{9}
+          \horizontalDominoShift{2}{3}{t}{9}
+          \verticalDominoShift{3}{2}{s}{9}
+          \verticalDominoShift{5}{2}{s}{9}
+          \verticalDominoMaybeShift{3}{3}{t}{9}
+          \fixedSquaresForGridShift{3}{2}{9}
+        \end{tikzpicture}
+      \end{figure}
+      \begin{figure}[H]
+        % 1s 2s 3t 4t 5- 6+ 7+
+        \centering
+        \begin{tikzpicture}[tableau, scale=.5]\gridLines{2}{4}\verticalDomino{1}{2}{1}\horizontalDomino{1}{3}{2}\verticalDomino{3}{2}{3}\verticalDomino{2}{3}{4}\horizontalDomino{1}{5}{5}\horizontalDomino{1}{7}{6}\horizontalDomino{2}{4}{7}\fixedSquaresForGrid{2}{4}\gridLinesShift{2}{4}{9}\verticalDominoShift{1}{2}{}{9}\horizontalDominoShift{1}{3}{}{9}\verticalDominoShift{3}{2}{}{9}\verticalDominoShift{2}{3}{}{9}\horizontalDominoShift{1}{5}{}{9}\horizontalDominoShift{1}{7}{+}{9}\horizontalDominoShift{2}{4}{}{9}\fixedSquaresForGridShift{2}{4}{9}\gridLinesShift{4}{2}{19}\verticalDominoShift{1}{2}{1}{19}\verticalDominoShift{3}{2}{2}{19}\horizontalDominoShift{1}{3}{3}{19}\horizontalDominoShift{2}{3}{4}{19}\verticalDominoShift{5}{2}{5}{19}\verticalDominoShift{7}{2}{6}{19}\verticalDominoShift{3}{3}{7}{19}\fixedSquaresForGridShift{4}{2}{19}\gridLinesShift{4}{2}{24}\verticalDominoShift{1}{2}{s}{24}\verticalDominoShift{3}{2}{s}{24}\horizontalDominoShift{1}{3}{t}{24}\horizontalDominoShift{2}{3}{t}{24}\verticalDominoShift{5}{2}{s}{24}\verticalDominoShift{7}{2}{}{24}\verticalDominoShift{3}{3}{t}{24}\fixedSquaresForGridShiftAlt{4}{2}{24}\end{tikzpicture}
+      \end{figure}
+    \end{itemize}
+    \item Here the sign in the above row is $+$,
+    the adjacent domino is vertical, and the unboxed cycle has at least two dominoes in it.
+    So, we can't add here as a horizontal domino.
+    However, we can add here as a vertical domino, contracting the unboxed cycle.
+    First, if the pair domino is blank, we need to put the $+$ sign into the top of the cycle, which may result in a shape change.
+    After that, we can add the new domino.
+    Then we box up the adjacent domino and the domino which it is paired with.
+
+    First, a simple example.
+    \begin{figure}[H]
+      \centering
+      \begin{tikzpicture}[tableau, scale = .7]
+        \gridLines{3}{2}
+        \verticalDomino{1}{2}{}
+        \horizontalDomino{1}{3}{+}
+        \verticalDomino{2}{3}{}
+        \verticalDominoMaybe{2}{4}{+}
+        \verticalDomino{3}{2}{}
+        \verticalDomino{4}{3}{}
+        \verticalDomino{5}{2}{}
+        \fixedSquaresForGrid{3}{2}
+
+        \gridLinesShift{2}{3}{7}
+        \verticalDominoShift{1}{2}{s}{7}
+        \horizontalDominoShift{1}{3}{t}{7}
+        \horizontalDominoShift{2}{3}{t}{7}
+        \horizontalDominoShift{1}{5}{s}{7}
+        \horizontalDominoShift{2}{5}{s}{7}
+        \verticalDominoShift{3}{2}{}{7}
+        \horizontalDominoMaybeShift{3}{3}{}{7}
+        \fixedSquaresForGridShift{2}{3}{7}
+      \end{tikzpicture}
+    \end{figure}
+    goes to
+    \begin{figure}[H]
+      \centering
+      \begin{tikzpicture}[tableau, scale = .7]
+        \gridLines{3}{2}
+        \emptyBox{1}{2}
+        \verticalDomino{1}{4}{+}
+        \horizontalDominoMaybe{3}{3}{+}
+        \verticalDomino{3}{2}{}
+        \verticalDomino{4}{3}{}
+        \verticalDomino{5}{2}{}
+        \fixedSquaresForGrid{3}{2}
+
+        \gridLinesShift{2}{3}{7}
+        \emptyBoxShift{1}{2}{7}
+        \verticalDominoShift{1}{4}{t}{7}
+        \horizontalDominoShift{1}{5}{s}{7}
+        \horizontalDominoShift{2}{5}{s}{7}
+        \verticalDominoShift{3}{2}{}{7}
+        \horizontalDominoMaybeShift{3}{3}{}{7}
+        \fixedSquaresForGridShift{2}{3}{7}
+      \end{tikzpicture}
+    \end{figure}
+    \begin{figure}[H]
+      % 1s 2+ 3t 4t 5s 6s 7+
+      \centering
+      \begin{tikzpicture}[tableau, scale=.56]\gridLines{3}{2}\verticalDomino{1}{2}{1}\horizontalDomino{1}{3}{2}\verticalDomino{3}{2}{3}\verticalDomino{2}{3}{4}\verticalDomino{5}{2}{5}\verticalDomino{4}{3}{6}\verticalDomino{2}{4}{7}\fixedSquaresForGrid{3}{2}\gridLinesShift{3}{2}{5}\verticalDominoShift{1}{4}{+}{5}\verticalDominoShift{3}{2}{}{5}\verticalDominoShift{5}{2}{}{5}\verticalDominoShift{4}{3}{}{5}\horizontalDominoShift{3}{3}{+}{5}\emptyBoxShift{1}{2}{5}\fixedSquaresForGridShift{3}{2}{5}\gridLinesShift{2}{3}{11}\verticalDominoShift{1}{2}{1}{11}\verticalDominoShift{3}{2}{2}{11}\horizontalDominoShift{1}{3}{3}{11}\horizontalDominoShift{2}{3}{4}{11}\horizontalDominoShift{1}{5}{5}{11}\horizontalDominoShift{2}{5}{6}{11}\horizontalDominoShift{3}{3}{7}{11}\fixedSquaresForGridShift{2}{3}{11}\gridLinesShift{2}{3}{18}\verticalDominoShift{3}{2}{}{18}\verticalDominoShift{1}{4}{t}{18}\horizontalDominoShift{1}{5}{s}{18}\horizontalDominoShift{2}{5}{s}{18}\horizontalDominoShift{3}{3}{}{18}\emptyBoxShift{1}{2}{18}\fixedSquaresForGridShiftAlt{2}{3}{18}\end{tikzpicture}
+    \end{figure}
+
+    Next, an example with shape change.
+    \begin{figure}[H]
+      \centering
+      \begin{tikzpicture}[tableau, scale = .7]
+        \gridLines{3}{3}
+        \verticalDomino{1}{2}{+}
+        \horizontalDomino{1}{3}{}
+        \horizontalDomino{1}{5}{+}
+        \verticalDomino{2}{3}{-}
+        \verticalDominoMaybe{2}{4}{+}
+        \verticalDomino{3}{2}{+}
+        \verticalDomino{4}{3}{-}
+        \verticalDomino{5}{2}{+}
+        \fixedSquaresForGrid{3}{3}
+
+        \gridLinesShift{3}{3}{9}
+        \verticalDominoShift{1}{2}{}{9}
+        \horizontalDominoShift{1}{3}{}{9}
+        \horizontalDominoShift{2}{3}{}{9}
+        \horizontalDominoShift{1}{5}{}{9}
+        \horizontalDominoShift{2}{5}{}{9}
+        \verticalDominoShift{3}{2}{t}{9}
+        \verticalDominoShift{5}{2}{}{9}
+        \horizontalDominoMaybeShift{3}{3}{}{9}
+        \fixedSquaresForGridShift{3}{3}{9}
+      \end{tikzpicture}
+    \end{figure}
+    \begin{figure}[H]
+      % 1s 2+ 3_-4 5_-6 7+ 8+
+      \centering
+      \begin{tikzpicture}[tableau, scale=.54]\gridLines{3}{3}\verticalDomino{1}{2}{1}\horizontalDomino{1}{3}{2}\verticalDomino{3}{2}{3}\horizontalDomino{2}{3}{4}\verticalDomino{5}{2}{5}\verticalDomino{3}{3}{6}\horizontalDomino{1}{5}{7}\verticalDomino{3}{4}{8}\fixedSquaresForGrid{3}{3}\gridLinesShift{3}{3}{7}\verticalDominoShift{1}{4}{}{7}\verticalDominoShift{3}{2}{}{7}\verticalDominoShift{5}{2}{+}{7}\horizontalDominoShift{4}{3}{}{7}\horizontalDominoShift{1}{5}{+}{7}\horizontalDominoShift{3}{3}{+}{7}\emptyBoxShift{1}{2}{7}\fixedSquaresForGridShift{3}{3}{7}\gridLinesShift{3}{3}{15}\verticalDominoShift{1}{2}{1}{15}\verticalDominoShift{3}{2}{2}{15}\horizontalDominoShift{1}{3}{3}{15}\verticalDominoShift{2}{3}{4}{15}\horizontalDominoShift{1}{5}{5}{15}\horizontalDominoShift{2}{4}{6}{15}\verticalDominoShift{5}{2}{7}{15}\horizontalDominoShift{3}{4}{8}{15}\fixedSquaresForGridShift{3}{3}{15}\gridLinesShift{3}{3}{22}\verticalDominoShift{3}{2}{s}{22}\verticalDominoShift{1}{4}{s}{22}\horizontalDominoShift{1}{5}{}{22}\verticalDominoShift{2}{5}{t}{22}\verticalDominoShift{5}{2}{}{22}\horizontalDominoShift{3}{3}{}{22}\emptyBoxShift{1}{2}{22}\fixedSquaresForGridShiftAlt{3}{3}{22}\end{tikzpicture}
+    \end{figure}
+    \item Here the sign in the above row is $+$,
+    the adjacent domino is vertical, and the unboxed cycle consists solely of the adjacent domino.
+    We may be able to add here.
+    However, if we add here (as in the previous case), we'll end up with a horizontal domino with a $+$ sign in the $y + 1$ row.
+    We need to see if that's possible, using the function \texttt{findRowToAddSignX()}.
+    If not, we add at the row indicated by the return value of that function.
+
+    If we can add here, we need to check first for a shape change from putting a $+$ sign in the cycle.
+    Basically, we proceed as in the previous case.
+
+    First, a simple example.
+    \begin{figure}[H]
+      \centering
+      \begin{tikzpicture}[tableau, scale = .7]
+        \gridLines{2}{2}
+        \verticalDomino{1}{2}{}
+        \horizontalDomino{1}{3}{+}
+        \verticalDomino{2}{3}{}
+        \verticalDominoMaybe{2}{4}{+}
+        \verticalDomino{3}{2}{}
+        \fixedSquaresForGrid{2}{2}
+
+        \gridLinesShift{2}{2}{7}
+        \verticalDominoShift{1}{2}{s}{7}
+        \horizontalDominoShift{1}{3}{t}{7}
+        \horizontalDominoShift{2}{3}{t}{7}
+        \verticalDominoShift{3}{2}{}{7}
+        \horizontalDominoMaybeShift{3}{3}{}{7}
+        \fixedSquaresForGridShift{2}{2}{7}
+      \end{tikzpicture}
+    \end{figure}
+    goes to
+    \begin{figure}[H]
+      \centering
+      \begin{tikzpicture}[tableau, scale = .7]
+        \gridLines{2}{2}
+        \emptyBox{1}{2}
+        \verticalDomino{1}{4}{+}
+        \horizontalDominoMaybe{3}{3}{+}
+        \verticalDomino{3}{2}{}
+        \fixedSquaresForGrid{2}{2}
+
+        \gridLinesShift{2}{2}{7}
+        \emptyBoxShift{1}{2}{7}
+        \verticalDominoShift{1}{4}{t}{7}
+        \verticalDominoShift{3}{2}{}{7}
+        \horizontalDominoMaybeShift{3}{3}{}{7}
+        \fixedSquaresForGridShift{2}{2}{7}
+      \end{tikzpicture}
+    \end{figure}
+    Next, an example with shape change.
+    \begin{figure}[H]
+      \centering
+      \begin{tikzpicture}[tableau, scale = .7]
+        \gridLines{2}{3}
+        \verticalDomino{1}{2}{+}
+        \horizontalDomino{1}{3}{}
+        \horizontalDomino{1}{5}{+}
+        \verticalDomino{2}{3}{-}
+        \verticalDominoMaybe{2}{4}{+}
+        \verticalDomino{3}{2}{}
+        \fixedSquaresForGrid{2}{3}
+
+        \gridLinesShift{3}{2}{9}
+        \verticalDominoShift{1}{2}{}{9}
+        \horizontalDominoShift{1}{3}{t}{9}
+        \horizontalDominoShift{2}{3}{}{9}
+        \verticalDominoShift{3}{2}{t}{9}
+        \verticalDominoShift{5}{2}{}{9}
+        \horizontalDominoMaybeShift{3}{3}{}{9}
+        \fixedSquaresForGridShift{3}{2}{9}
+      \end{tikzpicture}
+    \end{figure}
+    \begin{figure}[H]
+      % 1- 2+ 3s 4s 5+ 6+
+      \centering
+      \begin{tikzpicture}[tableau, scale=.56]\gridLines{2}{3}\verticalDomino{1}{2}{1}\horizontalDomino{1}{3}{2}\verticalDomino{3}{2}{3}\horizontalDomino{2}{3}{4}\horizontalDomino{1}{5}{5}\horizontalDomino{3}{3}{6}\fixedSquaresForGrid{2}{3}\gridLinesShift{2}{3}{7}\verticalDominoShift{1}{4}{}{7}\verticalDominoShift{3}{2}{}{7}\horizontalDominoShift{1}{5}{+}{7}\horizontalDominoShift{3}{3}{+}{7}\emptyBoxShift{1}{2}{7}\fixedSquaresForGridShift{2}{3}{7}\gridLinesShift{3}{2}{15}\verticalDominoShift{1}{2}{1}{15}\verticalDominoShift{3}{2}{2}{15}\horizontalDominoShift{1}{3}{3}{15}\verticalDominoShift{2}{3}{4}{15}\verticalDominoShift{5}{2}{5}{15}\verticalDominoShift{2}{4}{6}{15}\fixedSquaresForGridShift{3}{2}{15}\gridLinesShift{3}{2}{20}\verticalDominoShift{3}{2}{s}{20}\verticalDominoShift{1}{4}{s}{20}\verticalDominoShift{5}{2}{}{20}\horizontalDominoShift{3}{3}{}{20}\emptyBoxShift{1}{2}{20}\fixedSquaresForGridShiftAlt{3}{2}{20}\end{tikzpicture}
+    \end{figure}
+  \end{itemize}
+\end{document}
